@@ -40,10 +40,16 @@ class ConnectFour:
         return diagonals
 
     def available(self, row, col):
-        return self.get_space(row, col) == 0
+        if self.get_space(row, col) == 0:
+            return True
+        else:
+            return False
 
     def filled(self, row, col):
-        return not self.available(row, col)
+        if self.get_space(row, col) == 0:
+            return False
+        else:
+            return True
 
     def is_win(self, spaces):
         # Check if all of the spaces have the same value
