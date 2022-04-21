@@ -33,6 +33,10 @@ class ConnectXTester():
         print(f'Player 1 ({self.player_one_name} Win Percentage: {player_one_win_percent}')
         print(f'Player 2 ({self.player_two_name} Win Percentage: {player_two_win_percent}')
         print(f'Tie Percentage: {ties_percent}')
+        if (player_one_wins > player_two_wins):
+            print(f'Overall Winner: Player 1 ({self.player_one_name}) with Win % {player_one_win_percent * 100}')
+        else:
+            print(f'Overall Winner: Player 2 ({self.player_two_name}) with Win % {player_two_win_percent * 100}')
         return results, player_one_wins, player_two_wins, ties
 
     def play_game(self):
