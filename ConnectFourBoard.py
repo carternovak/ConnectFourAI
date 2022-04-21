@@ -2,11 +2,10 @@
 ConnectFour Initialization
 """
 
-import enum
 from re import L
 
 
-class ConnectFour:
+class ConnectFourBoard:
 
     def __init__(self, height=6, width=7):
         self.height = height
@@ -142,6 +141,6 @@ class ConnectFour:
 
 if __name__ == '__main__':
     # start_game()
-    game = ConnectFour()
+    board = ConnectFourBoard()
     #print(game.board)
-    print(game.get_diagonals())
+    print(board.get_diagonals())
