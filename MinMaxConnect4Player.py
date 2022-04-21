@@ -1,6 +1,7 @@
 # Connect4Player that uses MinMax to find the best moves
 import time
 import math
+from unittest.mock import NonCallableMagicMock
 
 class MinMaxConnect4Player():
     def __init__(self, heuristic, max_depth = None, max_time = None):
@@ -23,5 +24,7 @@ class MinMaxConnect4Player():
         if (board.winner != 0):
             return player * board.winner
         value = -math.inf
-        for row in board.get_available_moves():
-            pass
+        for col in board.get_available_moves():
+            board_after_move = board.make_move(col)
+            value = max(value, -self.negamax(board_after_move, depth + 1, player, start_time))
+

@@ -7,10 +7,13 @@ from re import L
 
 class ConnectFourBoard:
 
-    def __init__(self, height=6, width=7):
+    def __init__(self, height=6, width=7, existing_board = None):
         self.height = height
         self.width = width
-        self.board = [['0' for x in range(width)] for i in range(height)]
+        if (existing_board):
+            self.board = [[existing_board.get_spot(row, col) for col in range(width)] for row in range(height)]
+        else:
+            self.board = [['0' for x in range(width)] for i in range(height)]
         self.winner = 0
 
     def get_column(self, index):
@@ -24,6 +27,10 @@ class ConnectFourBoard:
 
     def get_space(self, row, col):
         return self.board[row][col]
+
+    # Return a deep copy of the current board
+    def clone_board(self):
+        return ConnectFourBoard(self.height, self.width, self)
 
     def set_space(self, row, col, new_val):
         self.board[row][col] = new_val
@@ -113,18 +120,20 @@ class ConnectFourBoard:
             if (val != 0):
                 return index - 1
 
-    # Places a piece in the given row
+    # Places a piece in the given row, doesn't mutate the board but instead returns a new board
     def make_move(self, col, player):
         if not self.col_available(col):
             raise RuntimeError("Column is full")
         # Find the first empty row in the column
         row_index = self.get_empty_index_in_row(self, col)
-        self.set_space(row_index, col, player)
+        new_board = self.clone()
+        new_board = new_board.set_space(row_index, col, player)
         # Check if anyone won
-        win = self.check_for_win(row_index, col)
+        win = new_board.check_for_win(row_index, col)
         # If someone won set them as the winner
         if (win != 0):
-            self.winner = win
+            new_board.winner = win
+        return new_board
 
 
     def get_board_as_array(self):
