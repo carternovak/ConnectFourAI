@@ -27,7 +27,7 @@ class ConnectFour:
         return self.board[row][col]
 
     def set_space(self, row, col, new_value):
-        return self.board[row][col] = new_value
+        self.board[row][col] = new_value
 
     def get_diagonals(self):
         diagonals = []
