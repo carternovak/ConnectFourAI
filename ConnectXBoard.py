@@ -5,11 +5,13 @@ ConnectFour Initialization
 from re import L
 
 
-class ConnectFourBoard:
+class ConnectXBoard:
 
-    def __init__(self, height=6, width=7, existing_board = None):
+    # X represents the number of pieces a player needs to get in a row to win (4 for regular Connect 4)
+    def __init__(self, height=6, width=7, x=4, existing_board = None):
         self.height = height
         self.width = width
+        self.x = x
         if (existing_board):
             self.board = [[existing_board.get_spot(row, col) for col in range(width)] for row in range(height)]
         else:
@@ -30,7 +32,7 @@ class ConnectFourBoard:
 
     # Return a deep copy of the current board
     def clone_board(self):
-        return ConnectFourBoard(self.height, self.width, self)
+        return ConnectXBoard(self.height, self.width, self.x, self)
 
     def set_space(self, row, col, new_val):
         self.board[row][col] = new_val
@@ -80,29 +82,29 @@ class ConnectFourBoard:
         # Get the row and col of the move
         row, col = move
         # Check up and down
-        up = [(row + x, col) for x in range(1,5)]
+        up = [(row + x, col) for x in range(1,self.x)]
         up_win = self.is_win(up)
         if up_win != 0:
             return up_win
-        down = [(row - x, col) for x in range(1,5)]
+        down = [(row - x, col) for x in range(1,self.x)]
         down_win = self.is_win(down)
         if down_win != 0:
             return down_win
         # Check left and right
-        right = [(row, col + x) for x in range(1,5)]
+        right = [(row, col + x) for x in range(1,self.x)]
         right_win = self.is_win(right)
         if right_win != 0:
             return right_win
-        left = [(row, col - x) for x in range(1,5)]
+        left = [(row, col - x) for x in range(1,self.x)]
         left_win = self.is_win(left)
         if left_win != 0:
             return left_win
         # Check diagonals
         diagonals = [
-            [(row - x, col - x) for x in range(1,5)],
-            [(row - x, col + x) for x in range(1,5)],
-            [(row + x, col + x) for x in range(1,5)],
-            [(row + x, col - x) for x in range(1,5)]
+            [(row - x, col - x) for x in range(1,self.x)],
+            [(row - x, col + x) for x in range(1,self.x)],
+            [(row + x, col + x) for x in range(1,self.x)],
+            [(row + x, col - x) for x in range(1,self.x)]
         ]
         for diagonal in diagonals:
             diagonal_win = self.is_win(diagonal)
