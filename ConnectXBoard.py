@@ -2,8 +2,6 @@
 ConnectFour Initialization
 """
 
-from re import L
-
 
 class ConnectXBoard:
 
@@ -16,7 +14,11 @@ class ConnectXBoard:
             self.board = [[existing_board.get_spot(row, col) for col in range(width)] for row in range(height)]
         else:
             self.board = [['0' for x in range(width)] for i in range(height)]
-        self.winner = 0
+        if (existing_board):
+            self.first_empty_in_col = [first_empty for first_empty in existing_board.first_empty_in_col]
+        else:
+            self.first_empty_in_col = [0 for col in range(width)]
+        self.winner = None
 
     def get_column(self, index):
         return [i[index] for i in self.board]
@@ -39,6 +41,8 @@ class ConnectXBoard:
         return ConnectXBoard(self.height, self.width, self.x)
 
     def set_space(self, row, col, new_val):
+        if self.get_empty_index_in_col(col) == row: 
+            self.first_empty_in_col[col] += 1;
         self.board[row][col] = new_val
 
     def get_diagonals(self):
@@ -63,7 +67,8 @@ class ConnectXBoard:
         return not self.get_space(row, col) == 0
 
     def col_available(self, col):
-       return self.available(0, col)
+       return self.first_empty_in_col[col] < self.height
+       #return self.available(0, col)
 
     def is_win(self, spaces):
         # Check if all of the spaces have the same value
@@ -83,6 +88,7 @@ class ConnectXBoard:
         return last_space
 
     def check_for_win(self, move):
+        if len(self.get_available_moves()) <= 0: return 0
         # Get the row and col of the move
         row, col = move
         # Check up and down
@@ -115,29 +121,30 @@ class ConnectXBoard:
             if diagonal_win != 0:
                 return diagonal_win
         # If someone hasn't won after all these checks then no one has won
-        return 0
+        return None
 
         # Gets the columns that can have a piece placed in them
     def get_available_moves(self):
         return [col for col in range(self.width) if self.col_available(col)]
 
-    def get_empty_index_in_row(self, row):
-        for index, val in enumerate(self.get_row(row)):
-            if (val != 0):
-                return index - 1
+    def get_empty_index_in_col(self, col):
+        return self.first_empty_in_col[col]
+        #for index, val in enumerate(self.get_row(row)):
+        #    if (val != 0):
+        #        return index - 1
 
     # Places a piece in the given row, doesn't mutate the board but instead returns a new board
     def make_move(self, col, player):
         if not self.col_available(col):
             raise RuntimeError("Column is full")
         # Find the first empty row in the column
-        row_index = self.get_empty_index_in_row(self, col)
+        row_index = self.get_empty_index_in_col(self, col)
         new_board = self.clone()
         new_board = new_board.set_space(row_index, col, player)
         # Check if anyone won
         win = new_board.check_for_win(row_index, col)
         # If someone won set them as the winner
-        if (win != 0):
+        if (win != None):
             new_board.winner = win
         return new_board
 

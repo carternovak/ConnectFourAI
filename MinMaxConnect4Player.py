@@ -23,7 +23,7 @@ class MinMaxConnect4Player():
         best_move = None
         if (depth > self.max_depth) or (time.time() - start_time > self.max_time):
             return player * self.heuristic(board), best_move
-        if (board.winner != 0):
+        if (board.winner != None):
             return player * board.winner, best_move
         value = -math.inf
         for col in board.get_available_moves():
