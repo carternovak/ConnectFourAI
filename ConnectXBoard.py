@@ -148,6 +148,6 @@ class ConnectXBoard:
 
 if __name__ == '__main__':
     # start_game()
-    board = ConnectFourBoard()
+    board = ConnectXBoard()
     #print(game.board)
     print(board.get_diagonals())
