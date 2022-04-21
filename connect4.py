@@ -30,6 +30,25 @@ class ConnectFour:
 
         return diagonals
 
+    def available(self, row, col):
+        if self.board[row][col] == 0:
+            return True
+        else:
+            return False
+
+    def filled(self, row, col):
+        if self.board [row][col] == 1 or -1:
+            return True
+        else:
+            return False
+
+    # def someone_wins(self, move):
+    #     #horizontal
+    #     for i in range(get_column):
+    #         for j in range(get_row):
+    #
+
+
 if __name__ == '__main__':
     # start_game()
     game = ConnectFour()
