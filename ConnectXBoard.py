@@ -34,6 +34,10 @@ class ConnectXBoard:
     def clone_board(self):
         return ConnectXBoard(self.height, self.width, self.x, self)
 
+    # Returns a deep copy of the current board with all the spots set to 0
+    def clone_empty(self):
+        return ConnectXBoard(self.height, self.width, self.x)
+
     def set_space(self, row, col, new_val):
         self.board[row][col] = new_val
 
