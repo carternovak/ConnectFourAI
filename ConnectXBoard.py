@@ -39,6 +39,7 @@ class ConnectXBoard:
     # Returns a deep copy of the current board with all the spots set to 0
     def clone_empty(self):
         return ConnectXBoard(self.height, self.width, self.x)
+        
 
     def set_space(self, row, col, new_val):
         if self.get_empty_index_in_col(col) == row: 
@@ -149,10 +150,10 @@ class ConnectXBoard:
         return new_board
 
 
-    def get_board_as_array(self):
+    def to_array(self):
         return self.board
 
-    def get_board_as_vector(self):
+    def to_vector(self):
         # Flatten the board into a vector (1D array)
         board_vector = [item for row in self.get_board_as_array() for item in row]
         return board_vector
