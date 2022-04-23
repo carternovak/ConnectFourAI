@@ -1,7 +1,13 @@
 """
 ConnectFour Initialization
 """
-
+import pygame
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLUE = (36, 84, 196)
+YELLOW = (239, 226, 40)
+RED = (222, 37, 0)
+TILESIZE = 100
 
 class ConnectXBoard:
 
@@ -10,6 +16,17 @@ class ConnectXBoard:
         self.height = height
         self.width = width
         self.x = x
+        # GUI
+        self.running = True
+        pygame.init()
+        self.diskRad = int(TILESIZE/2 - 5)
+        self.screenWidth = TILESIZE * width
+        self.screenHeight = TILESIZE * (height + 2)
+        self.dim = (self.screenHeight, self.screenWidth)
+        self.screen = pygame.display.set_mode(self.dim)
+        self.drawGUIboard()
+        pygame.time.wait(5000)
+
         if (existing_board):
             self.board = [[existing_board.get_spot(row, col) for col in range(width)] for row in range(height)]
         else:
@@ -157,6 +174,14 @@ class ConnectXBoard:
         # Flatten the board into a vector (1D array)
         board_vector = [item for row in self.get_board_as_array() for item in row]
         return board_vector
+
+    def drawGUIboard(self):
+        for col in range(self.width):
+            for row in range(self.height):
+                pygame.draw.rect(self.screen, BLUE, (TILESIZE * col, TILESIZE + TILESIZE*row, TILESIZE, TILESIZE))
+                pygame.draw.circle(self.screen, WHITE, ((TILESIZE * col + TILESIZE/2), TILESIZE*row  + TILESIZE/2 + TILESIZE), self.diskRad)
+
+        pygame.display.update()
 
 if __name__ == '__main__':
     # start_game()
