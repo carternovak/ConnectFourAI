@@ -14,6 +14,7 @@ GUIcursor = 0
 running = True
 pygame.init()
 
+
 class GUIBoard(ConnectXBoard):
     def __init__(self) -> None:
         super().__init__()
@@ -24,16 +25,27 @@ class GUIBoard(ConnectXBoard):
         self.drawGUIboard()
 
     def drawGUIboard(self):
+        # background
+        self.screen.fill(BLACK)
+
+        # arrow
+        pygame.draw.polygon(self.screen, WHITE,
+                            ((TILESIZE * (GUIcursor+1)-5, 50),             (TILESIZE * (GUIcursor+1) + 6.5, 50),
+                             (TILESIZE * (GUIcursor+1) + 5.5, 75),      (TILESIZE * (GUIcursor+1) + 20, 75),
+                             (TILESIZE * (GUIcursor+1) + 1.25, 93.75),   (TILESIZE * (GUIcursor+1) - 16.5, 75),
+                             (TILESIZE * (GUIcursor+1)-5, 75)))
+
+        # board
         for row in range(self.height):
             for col in range(self.width):
-                pygame.draw.rect(self.screen, BLUE, (TILESIZE * col + 50, TILESIZE + TILESIZE * row, TILESIZE, TILESIZE))
+                pygame.draw.rect(self.screen, BLUE,
+                                 (TILESIZE * col + 50, TILESIZE + TILESIZE * row, TILESIZE, TILESIZE))
                 pygame.draw.circle(self.screen, BLACK,
                                    ((TILESIZE * col + TILESIZE / 2) + 50, TILESIZE * row + TILESIZE / 2 + TILESIZE),
                                    DISKRAD)
         # for row in range(self.height):
         #     for col in range(self.width):
-                # TODO draw disks
-
+        #         TODO draw disks
 
         pygame.display.update()
 
@@ -61,8 +73,8 @@ if __name__ == '__main__':
 
                 if event.key == pygame.K_SPACE:
                     # TODO: space key. make move if valid
-                    print("space")
                     gui.make_move(GUIcursor, player)
                     print(gui.to_string())
+                    print(gui.to_array())
 
             # pygame.display.update()
