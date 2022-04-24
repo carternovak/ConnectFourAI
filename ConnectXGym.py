@@ -28,8 +28,7 @@ class ConnectXGym(gym.Env):
 
         if (not self.board.col_available(action)):
             # If an invalid move was made, very bad
-            reward = -100
-            info = {"Reason":"Invalid move attempted"}
+            raise RuntimeError("Illegal Move Made")
         else:
             # Make the move
             self.board = self.board.make_move(action, self.player_num)
@@ -44,7 +43,7 @@ class ConnectXGym(gym.Env):
                 self.board = self.board.make_move(other_player_move, self.other_player_num)
                 if (self.board.winner != None and self.board.winner != self.player_num):
                     # If you allowed your opponent to win, bad
-                    reward = -2
+                    reward = -1
                     info = {"Reason":"Move resulted in other player winning"}
         
         state = self.board.to_tensor()

@@ -31,7 +31,7 @@ class ConnectXTester():
         print(f'Results from {self.num_games} Games between {self.player_one_name} (Player 1) and {self.player_two_name} (Player 2)')
         print(f'Player 1 ({self.player_one_name}) Win Percentage: {player_one_win_percent * 100}%')
         print(f'Player 2 ({self.player_two_name}) Win Percentage: {player_two_win_percent * 100}%')
-        print(f'Tie Percentage: {ties_percent}')
+        print(f'Tie Percentage: {ties_percent * 100}%')
         if (player_one_wins > player_two_wins):
             print(f'Overall Winner: Player 1 ({self.player_one_name}) with Win % {player_one_win_percent * 100}')
         else:
@@ -49,11 +49,11 @@ class ConnectXTester():
                     player_two_move = self.player_two.get_move(test_board)
                     test_board = test_board.make_move(player_two_move, -1)
             else:
-                player_two_move = self.player_one.get_move(test_board)
-                test_board = test_board.make_move(player_one_move, 1)
+                player_two_move = self.player_two.get_move(test_board)
+                test_board = test_board.make_move(player_two_move, -1)
                 if (test_board.winner == None):
                     player_one_move = self.player_one.get_move(test_board)
-                    test_board = test_board.make_move(player_one_move, -1)
-        # print(test_board.to_string())
+                    test_board = test_board.make_move(player_one_move, 1)
+        print(test_board.to_string())
         return test_board.winner
         

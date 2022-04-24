@@ -20,7 +20,7 @@ class GUIBoard:
         self.dim = (self.screenHeight, self.screenWidth)
         self.screen = pygame.display.set_mode(self.dim)
         self.drawGUIboard()
-        pygame.time.wait(5000)
+        # pygame.time.wait(5000)
 
     def drawGUIboard(self):
         for col in range(self.board.width):

@@ -198,4 +198,5 @@ if __name__ == '__main__':
     # start_game()
     board = ConnectXBoard()
     #print(game.board)
-    print(board.get_diagonals())
+    new_board = board.make_move(0, 1)
+    print(new_board.to_vector())
