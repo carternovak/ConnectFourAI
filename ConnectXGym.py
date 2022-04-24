@@ -28,7 +28,7 @@ class ConnectXGym(gym.Env):
 
         if (not self.board.col_available(action)):
             # If an invalid move was made, very bad
-            reward = -10
+            reward = -100
             info = {"Reason":"Invalid move attempted"}
         else:
             # Make the move

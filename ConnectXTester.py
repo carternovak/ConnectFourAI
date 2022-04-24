@@ -13,7 +13,7 @@ class ConnectXTester():
     def test(self, print_results = True):
         results = []
         for game in range(self.num_games):
-            winner = self.play_game()
+            winner = self.play_game(first_player=game%2)
             results.append(winner)
             if (print_results):
                 if (winner == 0):
@@ -38,15 +38,22 @@ class ConnectXTester():
             print(f'Overall Winner: Player 2 ({self.player_two_name}) with Win % {player_two_win_percent * 100}')
         return results, player_one_wins, player_two_wins, ties
 
-    def play_game(self):
+    def play_game(self, first_player):
         # Clone the given board so that moves don't effect the base board
         test_board = self.connect_x_board.clone_board()
         while (test_board.winner == None):
-            player_one_move = self.player_one.get_move(test_board)
-            test_board = test_board.make_move(player_one_move, 1)
-            if (test_board.winner == None):
-                player_two_move = self.player_two.get_move(test_board)
-                test_board = test_board.make_move(player_two_move, -1)
+            if (first_player == 0):
+                player_one_move = self.player_one.get_move(test_board)
+                test_board = test_board.make_move(player_one_move, 1)
+                if (test_board.winner == None):
+                    player_two_move = self.player_two.get_move(test_board)
+                    test_board = test_board.make_move(player_two_move, -1)
+            else:
+                player_two_move = self.player_one.get_move(test_board)
+                test_board = test_board.make_move(player_one_move, 1)
+                if (test_board.winner == None):
+                    player_one_move = self.player_one.get_move(test_board)
+                    test_board = test_board.make_move(player_one_move, -1)
         # print(test_board.to_string())
         return test_board.winner
         

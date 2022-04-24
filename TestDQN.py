@@ -12,8 +12,8 @@ from ConnectXHeuristics import *
 from pathlib import Path
 
 if __name__ == '__main__':
-    height = 6
-    width = 7
+    height = 7
+    width = 6
     x = 4
     state_size = height * width
     action_size = width
@@ -24,21 +24,21 @@ if __name__ == '__main__':
     # agent.train(50)
     # print('Agent Trained')
 
-    dueling_dqns = DuelingDQNs()
-    dueling_dqns.train(5, 50)
-    dqn_1, dqn_2 = dueling_dqns.get_dqns()
-    dqn_1_player = DQNConnect4Player(dqn_1)
-    dqn_2_player = DQNConnect4Player(dqn_2)
+    # dueling_dqns = DuelingDQNs()
+    # dueling_dqns.train(5, 50)
+    # dqn_1, dqn_2 = dueling_dqns.get_dqns()
+    # dqn_1_player = DQNConnect4Player(dqn_1)
+    # dqn_2_player = DQNConnect4Player(dqn_2)
 
-    torch.save(dqn_1.policy_net.state_dict(), Path('p1-policy.pt'))
-    torch.save(dqn_1.target_net.state_dict(), Path('p1-target.pt'))
-    torch.save(dqn_2.policy_net.state_dict(), Path('p2-policy.pt'))
-    torch.save(dqn_2.target_net.state_dict(), Path('p2-target.pt'))
+    # torch.save(dqn_1.policy_net.state_dict(), Path('p1-policy.pt'))
+    # torch.save(dqn_1.target_net.state_dict(), Path('p1-target.pt'))
+    # torch.save(dqn_2.policy_net.state_dict(), Path('p2-policy.pt'))
+    # torch.save(dqn_2.target_net.state_dict(), Path('p2-target.pt'))
 
     ab_player = AlphaBetaConnect4Player(dist_heuristic, 1, 75)
-    lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, 1, 75)
+    lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 75)
     dqn_player = DQNConnect4Player(agent)
     random_player = RandomConnect4Player()
     human_player = HumanConnect4Player()
-    tester = ConnectXTester(dqn_1_player, 'DQN', human_player, 'Human', 50, ConnectXBoard(height=height, width=width, x=x))
+    tester = ConnectXTester(dqn_player, 'DQN', human_player, 'Human', 5, ConnectXBoard(height=height, width=width, x=x))
     tester.test()

@@ -1,4 +1,6 @@
 import random
+from collections import Set
+
 def manhattan_distance(point1, point2):
     dist = 0
     for (dim1, dim2) in zip(point1, point2):
@@ -55,24 +57,30 @@ def get_partial_lines(board, player):
     for line_length in range(2,board.x):
         partial_lines[line_length] = 0
 
+    line_list = []
     for piece in board.get_piece_locations(player):
         row, col = piece
         cardinal_lines = [
-            [(row, col - x) for x in range(board.x)],
-            [(row, col + x) for x in range(board.x)],
-            [(row - x, col) for x in range(board.x)],
-            [(row + x, col) for x in range(board.x)]
+            tuple((row, col - x) for x in range(board.x)),
+            tuple((row, col + x) for x in range(board.x)),
+            tuple((row - x, col) for x in range(board.x)),
+            tuple((row + x, col) for x in range(board.x))
         ]
         diagonal_lines = [
-            [(row - x, col - x) for x in range(board.x)],
-            [(row - x, col + x) for x in range(board.x)],
-            [(row - x, col + x) for x in range(board.x)],
-            [(row + x, col + x) for x in range(board.x)]
+            tuple((row - x, col - x) for x in range(board.x)),
+            tuple((row - x, col + x) for x in range(board.x)),
+            tuple((row - x, col + x) for x in range(board.x)),
+            tuple((row + x, col + x) for x in range(board.x))
         ]
-        for line in cardinal_lines + diagonal_lines:
-            line_length = get_line_length(board, line)
-            if line_length in partial_lines:
-                partial_lines[line_length] += 1
+
+        line_list = line_list + cardinal_lines + diagonal_lines
+
+    for line in set(line_list):
+        #print(line)
+        line_length = get_line_length(board, line)
+        if line_length in partial_lines:
+            partial_lines[line_length] += 1
+
     return partial_lines
 
 def partial_lines_heuristic(board):
@@ -84,16 +92,22 @@ def partial_lines_heuristic(board):
         partial_line_weights.insert(0, weight)
         weight *= (1 - weight_decay_rate)
     
-    player_one_partial_lines = get_partial_lines(board, 1)
-    player_two_partial_lines = get_partial_lines(board, -1)
+    player_one_partial_lines = get_partial_lines(board, 1).values()
+    player_two_partial_lines = get_partial_lines(board, -1).values()
     heuristic_value = 0
     for p1_lines, p2_lines, line_weight in zip(player_one_partial_lines, player_two_partial_lines, partial_line_weights):
+        # print("p1_lines")
+        # print(p1_lines)
+        # print("p2_lines")
+        # print(p2_lines)
+        # print("line_weight")
+        # print(line_weight)
         heuristic_value += (p1_lines - p2_lines) * line_weight
 
-    print(player_one_partial_lines)
-    print(player_two_partial_lines)
-    print(partial_line_weights)
-    print(heuristic_value)
+    # print(player_one_partial_lines)
+    # print(player_two_partial_lines)
+    # print(partial_line_weights)
+    # print(heuristic_value)
     return heuristic_value
 
 def random_heuristic(board):
