@@ -26,18 +26,23 @@ class GUIBoard(ConnectXBoard):
     def drawGUIboard(self):
         for row in range(self.height):
             for col in range(self.width):
-                pygame.draw.rect(self.screen, BLUE, (TILESIZE * col, TILESIZE + TILESIZE * row, TILESIZE, TILESIZE))
-                pygame.draw.circle(self.screen, WHITE,
-                                   ((TILESIZE * col + TILESIZE / 2), TILESIZE * row + TILESIZE / 2 + TILESIZE),
+                pygame.draw.rect(self.screen, BLUE, (TILESIZE * col + 50, TILESIZE + TILESIZE * row, TILESIZE, TILESIZE))
+                pygame.draw.circle(self.screen, BLACK,
+                                   ((TILESIZE * col + TILESIZE / 2) + 50, TILESIZE * row + TILESIZE / 2 + TILESIZE),
                                    DISKRAD)
-        # for row in
+        # for row in range(self.height):
+        #     for col in range(self.width):
+                # TODO draw disks
+
+
         pygame.display.update()
 
 
 if __name__ == '__main__':
     test_board = ConnectXBoard(height=7, width=6, x=4)
-    player = HumanConnect4Player()
+    player = 1
     gui = GUIBoard()
+
     while running:
         gui.drawGUIboard()
         for event in pygame.event.get():
@@ -56,6 +61,7 @@ if __name__ == '__main__':
 
                 if event.key == pygame.K_SPACE:
                     # TODO: space key. make move if valid
+                    print("space")
                     gui.make_move(GUIcursor, player)
                     print(gui.to_string())
 
