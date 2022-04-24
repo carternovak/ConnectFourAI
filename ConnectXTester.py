@@ -47,6 +47,6 @@ class ConnectXTester():
             if (test_board.winner == None):
                 player_two_move = self.player_two.get_move(test_board)
                 test_board = test_board.make_move(player_two_move, -1)
-        print(test_board.to_string())
+        # print(test_board.to_string())
         return test_board.winner
         

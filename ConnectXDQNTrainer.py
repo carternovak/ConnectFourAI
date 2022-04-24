@@ -98,9 +98,8 @@ class DQNAgent:
         for ep_num in range(episodes):
             done = False
             # Reset the training environment
-            self.env.reset()
             # Get the initial state from the environment
-            state = self.env.render(mode="tensor")
+            state = self.env.reset()
             # Run through the game until it ends
             while not done:
 

@@ -39,13 +39,14 @@ def get_line_length(board, line):
         row, col = point
         # If any piece belongs to the other player than the row can't be completed
         # or if the spot isn't on the board
-        if (not board.is_on_board(row, col)) or (board.get_space(row, col) == player * 1):
+        if (not board.is_on_board(row, col)) or (board.get_space(row, col) == (player * -1)):
             stop = True
             line_length = 0
         elif board.is_on_board(row, col) and board.get_space(row, col) == player:
             if not stop: line_length += 1
         else:
             stop = True
+
     return line_length
 
 def get_partial_lines(board, player):
@@ -78,7 +79,7 @@ def partial_lines_heuristic(board):
     # This heuristics counts the number of partial lines for each player
     partial_line_weights = []
     weight = 1
-    weight_decay_rate = .5
+    weight_decay_rate = 1
     for index in range(2,board.x):
         partial_line_weights.insert(0, weight)
         weight *= (1 - weight_decay_rate)
@@ -88,6 +89,11 @@ def partial_lines_heuristic(board):
     heuristic_value = 0
     for p1_lines, p2_lines, line_weight in zip(player_one_partial_lines, player_two_partial_lines, partial_line_weights):
         heuristic_value += (p1_lines - p2_lines) * line_weight
+
+    print(player_one_partial_lines)
+    print(player_two_partial_lines)
+    print(partial_line_weights)
+    print(heuristic_value)
     return heuristic_value
 
 def random_heuristic(board):
