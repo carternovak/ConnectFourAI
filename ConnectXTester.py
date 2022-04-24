@@ -1,5 +1,4 @@
 # Tests two Connect X Players against each other and compares their performance
-from unittest import result
 
 
 class ConnectXTester():
@@ -27,11 +26,11 @@ class ConnectXTester():
         player_two_wins = len([x for x in results if x == -1])
         ties = len([x for x in results if x == 0])
         player_one_win_percent = player_one_wins/len(results)
-        player_two_win_percent = player_one_wins/len(results)
-        ties_percent = ties/len(result)
-        print(f'Reults from {self.num_games+1} Games between {self.player_one_name} (Player 1) and {self.player_two_name} (Player 2)')
-        print(f'Player 1 ({self.player_one_name} Win Percentage: {player_one_win_percent}')
-        print(f'Player 2 ({self.player_two_name} Win Percentage: {player_two_win_percent}')
+        player_two_win_percent = player_two_wins/len(results)
+        ties_percent = ties/len(results)
+        print(f'Results from {self.num_games} Games between {self.player_one_name} (Player 1) and {self.player_two_name} (Player 2)')
+        print(f'Player 1 ({self.player_one_name}) Win Percentage: {player_one_win_percent * 100}%')
+        print(f'Player 2 ({self.player_two_name}) Win Percentage: {player_two_win_percent * 100}%')
         print(f'Tie Percentage: {ties_percent}')
         if (player_one_wins > player_two_wins):
             print(f'Overall Winner: Player 1 ({self.player_one_name}) with Win % {player_one_win_percent * 100}')
@@ -42,11 +41,12 @@ class ConnectXTester():
     def play_game(self):
         # Clone the given board so that moves don't effect the base board
         test_board = self.connect_x_board.clone_board()
-        while (test_board.winner == 0):
+        while (test_board.winner == None):
             player_one_move = self.player_one.get_move(test_board)
-            test_board.make_move(player_one_move, 1)
-            if (test_board.winner == 0):
+            test_board = test_board.make_move(player_one_move, 1)
+            if (test_board.winner == None):
                 player_two_move = self.player_two.get_move(test_board)
-                test_board.make_move(player_two_move, -1)
+                test_board = test_board.make_move(player_two_move, -1)
+        print(test_board.to_string())
         return test_board.winner
         
