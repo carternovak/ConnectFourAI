@@ -1,15 +1,16 @@
-from dqn.ConnectXDQNTrainer import *
-from dqn.ConnectXGym import *
-from dqn.DuelingDQNs import *
+from ConnectXDQNTrainer import *
+from ConnectXGym import *
+from DuelingDQNs import *
 
-from players.RandomConnect4Player import *
-from players.DQNConnect4Player import *
-from players.HumanConnect4Player import *
-from players.MinMaxConnect4Player import *
-from players.AlphaBetaConnect4Player import *
+from RandomConnect4Player import *
+from DQNConnect4Player import *
+from HumanConnect4Player import *
+from MinMaxConnect4Player import *
+from AlphaBetaConnect4Player import *
+
+from ConnectXTester import *
 
 from ConnectXBoard import *
-from ConnectXTester import *
 from ConnectXHeuristics import *
 
 from pathlib import Path
@@ -41,7 +42,7 @@ if __name__ == '__main__':
     torch.save(agent.target_net.state_dict(), Path('rand-target.pt'))
 
     dueling_dqns = DuelingDQNs()
-    dqn_one_avg_reward, dqn_two_avg_reward = dueling_dqns.train(10, 300)
+    dqn_one_avg_reward, dqn_two_avg_reward = dueling_dqns.train(5, 1000)
     plt.plot(dqn_one_avg_reward)
     plt.plot(dqn_two_avg_reward)
     plt.ylabel('Average Reward')
@@ -51,10 +52,10 @@ if __name__ == '__main__':
     dqn_1_player = DQNConnect4Player(dqn_1)
     dqn_2_player = DQNConnect4Player(dqn_2)
 
-    torch.save(dqn_1.policy_net.state_dict(), Path('10-300-p1-policy.pt'))
-    torch.save(dqn_1.target_net.state_dict(), Path('10-300-p1-target.pt'))
-    torch.save(dqn_2.policy_net.state_dict(), Path('10-300-p2-policy.pt'))
-    torch.save(dqn_2.target_net.state_dict(), Path('10-300-p2-target.pt'))
+    torch.save(dqn_1.policy_net.state_dict(), Path('5-1000-p1-policy.pt'))
+    torch.save(dqn_1.target_net.state_dict(), Path('5-1000-p1-target.pt'))
+    torch.save(dqn_2.policy_net.state_dict(), Path('5-1000-p2-policy.pt'))
+    torch.save(dqn_2.target_net.state_dict(), Path('5-1000-p2-target.pt'))
 
     # dqn_1_player = DQNConnect4Player(DQNAgent(
     #     env, board_height=height, board_width=width, action_states=action_size, batch_size=128, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.8, lr=0.0001,

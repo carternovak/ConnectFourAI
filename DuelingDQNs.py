@@ -1,4 +1,4 @@
-from players.DQNConnect4Player import *
+from DQNConnect4Player import *
 from ConnectXBoard import *
 from ConnectXGym import *
 from ConnectXDQNTrainer import *
