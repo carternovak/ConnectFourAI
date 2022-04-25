@@ -1,14 +1,17 @@
-from ConnectXDQNTrainer import *
-from RandomConnect4Player import *
-from DQNConnect4Player import *
+from dqn.ConnectXDQNTrainer import *
+from dqn.ConnectXGym import *
+from dqn.DuelingDQNs import *
+
+from players.RandomConnect4Player import *
+from players.DQNConnect4Player import *
+from players.HumanConnect4Player import *
+from players.MinMaxConnect4Player import *
+from players.AlphaBetaConnect4Player import *
+
 from ConnectXBoard import *
-from ConnectXGym import *
 from ConnectXTester import *
-from HumanConnect4Player import *
-from DuelingDQNs import *
-from MinMaxConnect4Player import *
-from AlphaBetaConnect4Player import *
 from ConnectXHeuristics import *
+
 from pathlib import Path
 import matplotlib.pyplot as plt
 
