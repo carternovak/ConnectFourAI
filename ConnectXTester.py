@@ -1,14 +1,19 @@
 # Tests two Connect X Players against each other and compares their performance
 
 
+from GUIBoard import GUIBoard
+
+
 class ConnectXTester():
-    def __init__(self, player_one, player_one_name, player_two, player_two_name, num_games, connect_x_board) -> None:
+    def __init__(self, player_one, player_one_name, player_two, player_two_name, num_games, connect_x_board, pause = False, render = None) -> None:
         self.player_one = player_one
         self.player_one_name = player_one_name
         self.player_two = player_two
         self.player_two_name = player_two_name
         self.num_games = num_games
         self.connect_x_board = connect_x_board
+        self.pause = pause
+        self.render = render
 
     def test(self, print_results = True):
         results = []
@@ -43,16 +48,40 @@ class ConnectXTester():
         test_board = self.connect_x_board.clone_board()
         while (test_board.winner == None):
             if (first_player == 0):
+                if (self.render == 'pygame'):
+                    GUIBoard(test_board).drawGUIboard()
+                    print(test_board.to_string())
+                if (self.pause):
+                    input("(P2 Moved) Press Enter to continue...")
                 player_one_move = self.player_one.get_move(test_board)
+                print(f'(P1 Move) {player_one_move}')
                 test_board = test_board.make_move(player_one_move, 1)
                 if (test_board.winner == None):
+                    if (self.render == 'pygame'):
+                        GUIBoard(test_board).drawGUIboard()
+                        print(test_board.to_string())
+                    if (self.pause):
+                        input("(P1 Moved) Press Enter to continue...")
                     player_two_move = self.player_two.get_move(test_board)
+                    print(f'(P2 Move) {player_two_move}')
                     test_board = test_board.make_move(player_two_move, -1)
             else:
+                if (self.render == 'pygame'):
+                    GUIBoard(test_board).drawGUIboard()
+                    print(test_board.to_string())
+                if (self.pause):
+                    input("(P1 Moved) Press Enter to continue...")
                 player_two_move = self.player_two.get_move(test_board)
+                print(f'(P2 Move) {player_two_move}')
                 test_board = test_board.make_move(player_two_move, -1)
                 if (test_board.winner == None):
+                    if (self.render == 'pygame'):
+                        GUIBoard(test_board).drawGUIboard()
+                        print(test_board.to_string())
+                    if (self.pause):
+                        input("(P2 Moved) Press Enter to continue...")
                     player_one_move = self.player_one.get_move(test_board)
+                    print(f'(P1 Move) {player_one_move}')
                     test_board = test_board.make_move(player_one_move, 1)
         print(test_board.to_string())
         return test_board.winner

@@ -124,10 +124,10 @@ class DQNAgent:
         self.min_epsilon = min_epsilon
         self.target_update_rate = target_update_rate
 
-    def get_move(self, state):
+    def get_move_private(self, state):
         if (self.conv_model):
             state = state.view(1, self.board_height, self.board_width)
-        return self.predict(state, False)
+        return self.predict(state, False)[0][0]
 
     def predict(self, state, exploration_mode = True):
         exploration_rate = self.epsilon if exploration_mode else 0
@@ -268,7 +268,7 @@ class DQNAgent:
             # Run through the game until it ends
             ep_loss = 0
             while not done:
-                self.env.render(mode="human")
+                # self.env.render(mode="human")
                 action = self.predict(state)
                 next_state, reward, done, info = self.env.step(action)
                 if (self.conv_model):

@@ -42,7 +42,7 @@ if __name__ == '__main__':
     # torch.save(agent.target_net.state_dict(), Path('rand-target.pt'))
 
     dueling_dqns = DuelingDQNs(conv=True)
-    dqn_one_avg_reward, dqn_two_avg_reward = dueling_dqns.train(5, 500)
+    dqn_one_avg_reward, dqn_two_avg_reward = dueling_dqns.train(1, 200)
     # plt.plot(dqn_one_avg_reward)
     # plt.plot(dqn_two_avg_reward)
     # plt.ylabel('Average Reward')
@@ -52,10 +52,10 @@ if __name__ == '__main__':
     dqn_1_player = DQNConnect4Player(dqn_1)
     dqn_2_player = DQNConnect4Player(dqn_2)
 
-    torch.save(dqn_1.policy_net.state_dict(), Path('5-500-conv-p1-policy.pt'))
-    torch.save(dqn_1.target_net.state_dict(), Path('5-500-conv-p1-target.pt'))
-    torch.save(dqn_2.policy_net.state_dict(), Path('5-500-conv-p2-policy.pt'))
-    torch.save(dqn_2.target_net.state_dict(), Path('5-500-conv-p2-target.pt'))
+    # torch.save(dqn_1.policy_net.state_dict(), Path('5-500-conv-p1-policy.pt'))
+    # torch.save(dqn_1.target_net.state_dict(), Path('5-500-conv-p1-target.pt'))
+    # torch.save(dqn_2.policy_net.state_dict(), Path('5-500-conv-p2-policy.pt'))
+    # torch.save(dqn_2.target_net.state_dict(), Path('5-500-conv-p2-target.pt'))
 
     # dqn_1_player = DQNConnect4Player(DQNAgent(
     #     env, conv_model=True, board_height=height, board_width=width, action_states=action_size, batch_size=128, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.8, lr=0.0001,
@@ -68,9 +68,9 @@ if __name__ == '__main__':
     #     ))
 
     sse_player = AlphaBetaConnect4Player(dist_heuristic, 1, 25)
-    lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 15)
+    lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 75)
     dqn_player = DQNConnect4Player(agent)
     random_player = RandomConnect4Player()
     human_player = HumanConnect4Player()
-    tester = ConnectXTester(dqn_1_player, 'DQN', human_player, 'Human', 10, ConnectXBoard(height=height, width=width, x=x))
+    tester = ConnectXTester(dqn_1_player, 'DQN 1', dqn_2_player, 'DQN 2', 10, ConnectXBoard(height=height, width=width, x=x), pause = True, render = 'pygame')
     tester.test()

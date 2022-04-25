@@ -19,9 +19,9 @@ pygame.init()
 class GUIBoard(ConnectXBoard):
     def __init__(self, board) -> None:
         super().__init__()
-        self.screenWidth = TILESIZE * board.width
-        self.screenHeight = TILESIZE * (board.height + 2)
-        self.dim = (self.screenHeight, self.screenWidth)
+        self.screenWidth = TILESIZE * (board.width + 1)
+        self.screenHeight = (TILESIZE * (board.height + 2))
+        self.dim = (self.screenWidth, self.screenHeight)
         self.screen = pygame.display.set_mode(self.dim)
         self.board = board
 
