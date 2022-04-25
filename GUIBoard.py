@@ -1,7 +1,8 @@
+from cmath import pi
 import pygame
 import sys
 from ConnectXBoard import *
-from players.HumanConnect4Player import HumanConnect4Player
+from HumanConnect4Player import *
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -16,13 +17,13 @@ pygame.init()
 
 
 class GUIBoard(ConnectXBoard):
-    def __init__(self) -> None:
+    def __init__(self, board) -> None:
         super().__init__()
-        self.screenWidth = TILESIZE * self.width
-        self.screenHeight = TILESIZE * (self.height + 2)
+        self.screenWidth = TILESIZE * board.width
+        self.screenHeight = TILESIZE * (board.height + 2)
         self.dim = (self.screenHeight, self.screenWidth)
         self.screen = pygame.display.set_mode(self.dim)
-        self.drawGUIboard()
+        self.board = board
 
     def drawGUIboard(self):
         # background
@@ -36,11 +37,15 @@ class GUIBoard(ConnectXBoard):
                              (TILESIZE * (GUIcursor+1)-5, 75)))
 
         # board
-        for row in range(self.height):
-            for col in range(self.width):
+        for row in range(self.board.height):
+            for col in range(self.board.width):
+                piece = self.board.get_space(row, col)
+                row = (self.board.height - 1 - row)
+                colors = {0:BLACK, 1:YELLOW, -1:RED}
+                color = colors[piece]
                 pygame.draw.rect(self.screen, BLUE,
                                  (TILESIZE * col + 50, TILESIZE + TILESIZE * row, TILESIZE, TILESIZE))
-                pygame.draw.circle(self.screen, BLACK,
+                pygame.draw.circle(self.screen, color,
                                    ((TILESIZE * col + TILESIZE / 2) + 50, TILESIZE * row + TILESIZE / 2 + TILESIZE),
                                    DISKRAD)
         # for row in range(self.height):
@@ -53,7 +58,7 @@ class GUIBoard(ConnectXBoard):
 if __name__ == '__main__':
     test_board = ConnectXBoard(height=7, width=6, x=4)
     player = 1
-    gui = GUIBoard()
+    gui = GUIBoard(test_board)
 
     while running:
         gui.drawGUIboard()

@@ -54,10 +54,47 @@ class DQN(nn.Module):
         x = self.l6(x)
         return x
 
+class ConvDQN(nn.Module):
+
+    def __init__(self, height, width, action_states, kernel_size=2, stride=1) -> None:
+        super(ConvDQN, self).__init__()
+        self.height = height
+        self.width = width
+        self.conv1 = nn.Conv2d(1, 16, kernel_size, stride)
+        self.bn16 = nn.BatchNorm2d(16)
+        self.conv2 = nn.Conv2d(16, 32, kernel_size, stride)
+        self.bn32 = nn.BatchNorm2d(32)
+        # self.conv3 = nn.Conv2d(32, 32, kernel_size, stride)
+
+        # SOURCE: https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
+        def conv2d_size_out(size, kernel_size = 2, stride = 1):
+            return (size - (kernel_size - 1) - 1) // stride  + 1
+        
+        convw = conv2d_size_out(conv2d_size_out(width))#conv2d_size_out(conv2d_size_out(conv2d_size_out(width)))
+        convh = conv2d_size_out(conv2d_size_out(height))#conv2d_size_out(conv2d_size_out(conv2d_size_out(height)))
+
+        linear_input_size = convw * convh * 32
+        # END
+        self.l1 = nn.Linear(linear_input_size, 20)
+        self.l2 = nn.Linear(20, action_states)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        # print(x.shape)
+        x = self.relu(self.bn16(self.conv1(x)))
+        x = self.relu(self.bn32(self.conv2(x)))
+        # x = self.relu(self.bn32(self.conv3(x)))
+        x = x.view(x.size(0), -1)
+        # print(x.shape)
+        x = self.relu(self.l1(x))
+        # Don't use ReLu fo the last one
+        x = self.l2(x)
+        return x
+
 # Pseudo Code
 # For episode in episodes
 class DQNAgent:
-    def __init__(self, env, board_width, board_height, action_states, batch_size, lr, gamma, epsilon, epsilon_decay = 0.01, min_epsilon=0.1, target_update_rate = 100, pre_trained_target = None, pre_trained_policy = None) -> None:
+    def __init__(self, env, board_width, board_height, action_states, batch_size, lr, gamma, epsilon, epsilon_decay = 0.01, min_epsilon=0.1, target_update_rate = 100, pre_trained_target = None, pre_trained_policy = None, conv_model = False) -> None:
         self.memory = ReplayMemory(50000)
         self.env = env
         self.board_width = board_width
@@ -65,8 +102,13 @@ class DQNAgent:
         input_size = board_width * board_height
         self.input_size = input_size
         self.action_states = action_states
-        self.policy_net = DQN(input_size, action_states)
-        self.target_net = DQN(input_size, action_states)
+        self.conv_model = conv_model
+        if (self.conv_model):
+            self.policy_net = ConvDQN(board_width, board_height, action_states)
+            self.target_net = ConvDQN(board_width, board_height, action_states)
+        else:
+            self.policy_net = DQN(input_size, action_states)
+            self.target_net = DQN(input_size, action_states)
         if (pre_trained_policy and pre_trained_target):
             self.policy_net.load_state_dict(pre_trained_policy)
             self.target_net.load_state_dict(pre_trained_target)
@@ -82,32 +124,45 @@ class DQNAgent:
         self.min_epsilon = min_epsilon
         self.target_update_rate = target_update_rate
 
+    def get_move(self, state):
+        if (self.conv_model):
+            state = state.view(1, self.board_height, self.board_width)
+        return self.predict(state, False)
+
     def predict(self, state, exploration_mode = True):
         exploration_rate = self.epsilon if exploration_mode else 0
+        
+        if (self.conv_model):
+            top_row = torch.abs(state[0][self.board_height - 1])
+        else:
+            top_row = torch.abs(state[-self.board_width:])
+
+        illegal_move_penalty = -9999999
+        illegal_move_mask = top_row * illegal_move_penalty
         if (random.random() < exploration_rate):
             # Return a random state
             # Generate a random tensor
             # Mask out illegal moves
             # return the max
             rand_tensor = torch.rand(self.action_states)
-            illegal_move_penalty = -9999999
             #print(state[-self.board_width:])
             # Use absolute value so that all filled spaces are 1
-            illegal_move_mask = torch.abs(state[-self.board_width:]) * illegal_move_penalty
             #print(illegal_move_mask)
             masked_rand = rand_tensor + illegal_move_mask
+            # print('masked_rand')
+            # print(masked_rand)
             return torch.argmax(masked_rand).view(1,1)
             #return torch.tensor(random.randrange(self.action_states)).view(1,1)
         else:
             # Return a state based on the policy
-            q_s = self.policy_net(state)
+            q_s = self.policy_net(state.unsqueeze(0))
             # Mask out illegal moves (any column with a 1 in the first space)
-            illegal_move_penalty = -9999999
             #print(state[-self.board_width:])
             # Use absolute value so that all filled spaces are 1
-            illegal_move_mask = torch.abs(state[-self.board_width:]) * illegal_move_penalty
             #print(illegal_move_mask)
             masked_qs = q_s + illegal_move_mask
+            # print('masked_qs')
+            # print(masked_qs)
             return torch.argmax(masked_qs).view(1,1)
 
     def experience_replay(self):
@@ -123,10 +178,17 @@ class DQNAgent:
         # print(transitions.state)
         # print("action")
         # print(transitions.action)
-        state_batch = torch.vstack(transitions.state)
-        # print(state_batch.shape)
+        # print(experience_batch[0].state.shape)
+        if (self.conv_model):
+            state_batch = torch.stack(transitions.state)
+        else:
+            state_batch = torch.vstack(transitions.state)
         action_batch = torch.cat(transitions.action)
-        next_state_batch = torch.vstack(transitions.next_state)
+
+        if (self.conv_model):
+            next_state_batch = torch.stack(transitions.next_state)
+        else:
+            next_state_batch = torch.vstack(transitions.next_state)
         reward_batch = torch.cat(transitions.reward)
         # Convert to numbers to be used as a mask
         done_batch = torch.cat(transitions.done).long()
@@ -200,12 +262,20 @@ class DQNAgent:
             # Reset the training environment
             # Get the initial state from the environment
             state = self.env.reset()
+            if (self.conv_model):
+                # Convert 1d input to 2d
+                state = state.view(1, self.board_height, self.board_width)
             # Run through the game until it ends
             ep_loss = 0
             while not done:
-
+                self.env.render(mode="human")
                 action = self.predict(state)
                 next_state, reward, done, info = self.env.step(action)
+                if (self.conv_model):
+                    # Convert 1d input to 2d
+                    # print(next_state)
+                    next_state = next_state.view(1, self.board_height, self.board_width)
+                    # print(next_state)
                 ep_rewards.append(reward)
                 self.memory.store(state, action, next_state, torch.tensor([reward]), torch.tensor([done]))
                 state = next_state

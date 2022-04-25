@@ -3,6 +3,7 @@ import gym
 from gym import spaces
 import numpy as np
 import torch
+from GUIBoard import *
 
 class ConnectXGym(gym.Env):
 
@@ -52,7 +53,8 @@ class ConnectXGym(gym.Env):
 
     def render(self, mode = "human"):
         if (mode == "human"):
-            print(self.board.to_string())
+            GUIBoard(self.board).drawGUIboard()
+            #print(self.board.to_string())
         if (mode == "tensor"):
             return self.board.to_tensor()
 
