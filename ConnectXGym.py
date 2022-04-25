@@ -63,6 +63,8 @@ class ConnectXGym(gym.Env):
             player_going_first = random.randint(1,2)
             # If the other player is going first then make a move for them
             if (player_going_first == 2):
+                # print(self.other_player)
+                # print(self.board)
                 other_player_move = self.other_player.get_move(self.board)
                 self.board = self.board.make_move(other_player_move, self.other_player_num)
             return self.board.to_tensor()

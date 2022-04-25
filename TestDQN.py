@@ -1,6 +1,7 @@
 from ConnectXDQNTrainer import *
 from ConnectXGym import *
 from DuelingDQNs import *
+from GreedyConnect4Player import GreedyConnect4Player
 
 from RandomConnect4Player import *
 from DQNConnect4Player import *
@@ -13,12 +14,14 @@ from ConnectXTester import *
 from ConnectXBoard import *
 from ConnectXHeuristics import *
 
+from THUNDERDOME import ThunderDome
+
 from pathlib import Path
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    height = 7
-    width = 6
+    height = 6
+    width = 7
     x = 4
     state_size = height * width
     action_size = width
@@ -41,21 +44,21 @@ if __name__ == '__main__':
     # torch.save(agent.policy_net.state_dict(), Path('rand-policy.pt'))
     # torch.save(agent.target_net.state_dict(), Path('rand-target.pt'))
 
-    dueling_dqns = DuelingDQNs(conv=True)
-    dqn_one_avg_reward, dqn_two_avg_reward = dueling_dqns.train(1, 200)
-    # plt.plot(dqn_one_avg_reward)
-    # plt.plot(dqn_two_avg_reward)
-    # plt.ylabel('Average Reward')
-    # plt.xlabel('Epoch')
-    # plt.show()
-    dqn_1, dqn_2 = dueling_dqns.get_dqns()
-    dqn_1_player = DQNConnect4Player(dqn_1)
-    dqn_2_player = DQNConnect4Player(dqn_2)
+    # dueling_dqns = DuelingDQNs(conv=True, height=height, width=width)
+    # dqn_one_avg_reward, dqn_two_avg_reward = dueling_dqns.train(15, 500)
+    # # plt.plot(dqn_one_avg_reward)
+    # # plt.plot(dqn_two_avg_reward)
+    # # plt.ylabel('Average Reward')
+    # # plt.xlabel('Epoch')
+    # # plt.show()
+    # dqn_1, dqn_2 = dueling_dqns.get_dqns()
+    # dqn_1_player = DQNConnect4Player(dqn_1)
+    # dqn_2_player = DQNConnect4Player(dqn_2)
 
-    # torch.save(dqn_1.policy_net.state_dict(), Path('5-500-conv-p1-policy.pt'))
-    # torch.save(dqn_1.target_net.state_dict(), Path('5-500-conv-p1-target.pt'))
-    # torch.save(dqn_2.policy_net.state_dict(), Path('5-500-conv-p2-policy.pt'))
-    # torch.save(dqn_2.target_net.state_dict(), Path('5-500-conv-p2-target.pt'))
+    # torch.save(dqn_1.policy_net.state_dict(), Path('15-500-conv-p1-policy.pt'))
+    # torch.save(dqn_1.target_net.state_dict(), Path('15-500-conv-p1-target.pt'))
+    # torch.save(dqn_2.policy_net.state_dict(), Path('15-500-conv-p2-policy.pt'))
+    # torch.save(dqn_2.target_net.state_dict(), Path('15-500-conv-p2-target.pt'))
 
     # dqn_1_player = DQNConnect4Player(DQNAgent(
     #     env, conv_model=True, board_height=height, board_width=width, action_states=action_size, batch_size=128, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.8, lr=0.0001,
@@ -67,10 +70,23 @@ if __name__ == '__main__':
     #     pre_trained_policy=torch.load(Path('100-600-p2-policy.pt')),pre_trained_target=torch.load(Path('100-600-p2-target.pt'))
     #     ))
 
+    # dqn_one_agent = DQNAgent(env, conv_model=True, board_width=width, board_height=height, action_states=action_size, batch_size=100, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.5, lr=0.0001)
+    # dqn_two_agent = DQNAgent(env, conv_model=False, board_width=width, board_height=height, action_states=action_size, batch_size=100, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.5, lr=0.0001)
+    # test_thunderdome = ThunderDome({'DQN_CNN':dqn_one_agent, 'DQN_NOT_CNN':dqn_two_agent}, {'RAND': RandomConnect4Player(),'GREEDY': GreedyConnect4Player()})
+
+    # test_thunderdome.thunderdome(15, 500)
+
+    # thunderdome_players = test_thunderdome.get_trained_models()
+
+    # dqn_cnn_player = DQNConnect4Player(thunderdome_players['DQN_CNN'])
+    # dqn_norm_player = DQNConnect4Player(thunderdome_players['DQN_NOT_CNN'])
     sse_player = AlphaBetaConnect4Player(dist_heuristic, 1, 25)
     lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 75)
     dqn_player = DQNConnect4Player(agent)
     random_player = RandomConnect4Player()
     human_player = HumanConnect4Player()
-    tester = ConnectXTester(dqn_1_player, 'DQN 1', dqn_2_player, 'DQN 2', 10, ConnectXBoard(height=height, width=width, x=x), pause = True, render = 'pygame')
+    tester = ConnectXTester(dqn_cnn_player, 'DQN CNN', human_player, 'Human', 10, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
     tester.test()
+
+    # tester = ConnectXTester(human_player, 'Human', dqn_norm_player, 'DQN NORM', 10, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
+    # tester.test()
