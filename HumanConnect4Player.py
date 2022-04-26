@@ -1,4 +1,4 @@
-from players.BaseConnect4Player import *
+from BaseConnect4Player import *
 # The human interface for playing Connect 4
 
 class HumanConnect4Player(BaseConnect4Player):
