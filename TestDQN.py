@@ -1,6 +1,7 @@
 from ConnectXDQNTrainer import *
 from ConnectXGym import *
 from DuelingDQNs import *
+from SelfPlay import self_play, true_self_play
 from GreedyConnect4Player import GreedyConnect4Player
 
 from RandomConnect4Player import *
@@ -80,13 +81,38 @@ if __name__ == '__main__':
 
     # dqn_cnn_player = DQNConnect4Player(thunderdome_players['DQN_CNN'])
     # dqn_norm_player = DQNConnect4Player(thunderdome_players['DQN_NOT_CNN'])
-    sse_player = AlphaBetaConnect4Player(dist_heuristic, 1, 25)
+
+    # board1 = ConnectXBoard()
+    # env1 = ConnectXGym(board1, RandomConnect4Player(), 1, -1)
+    # rand_player_one = DQNAgent(env1, width, height, action_size, conv_model = True, batch_size=128, lr=0.005, gamma=0.7, epsilon=0.5, epsilon_decay=0.001, min_epsilon=0.05)
+    # rand_player_one.train(200)
+
+    # board2 = ConnectXBoard()
+    # env2 = ConnectXGym(board2, RandomConnect4Player(), 1, -1)
+    # rand_player_two = DQNAgent(env2, width, height, action_size, conv_model = True, batch_size=128, lr=0.005, gamma=0.7, epsilon=0.5, epsilon_decay=0.001, min_epsilon=0.05)
+    # rand_player_two.train(200)
+
+    # def compare(model1, model2):
+    #     for p1, p2 in zip(model1.parameters(), model2.parameters()):
+    #         if p1.data.ne(p2.data).sum() > 0:
+    #             return False
+    #     return True
+
+    # self_play_agent = self_play(ConnectXBoard(), 5, episodes_per_generation=1000, learning_episodes=1000)
+    # self_player = DQNConnect4Player(self_play_agent)
+    true_self_play_agent = true_self_play(ConnectXBoard(), 5, episodes_per_generation=1000, random_episodes=1000)
+    true_self_player = DQNConnect4Player(true_self_play_agent)
+    sse_player = AlphaBetaConnect4Player(dist_heuristic, 1, 75)
     lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 75)
     dqn_player = DQNConnect4Player(agent)
     random_player = RandomConnect4Player()
     human_player = HumanConnect4Player()
-    tester = ConnectXTester(dqn_cnn_player, 'DQN CNN', human_player, 'Human', 10, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
-    tester.test()
-
-    # tester = ConnectXTester(human_player, 'Human', dqn_norm_player, 'DQN NORM', 10, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
+    # tester = ConnectXTester(DQNConnect4Player(rand_player_one), 'Rand 1', HumanConnect4Player(), 'Human', 5, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
     # tester.test()
+    # tester = ConnectXTester(DQNConnect4Player(rand_player_two), 'Rand 2', HumanConnect4Player(), 'Human', 5, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
+    # tester.test()
+
+    # print(compare(rand_player_one.policy_net, rand_player_two.policy_net))
+
+    tester = ConnectXTester(sse_player, 'SSE', true_self_player, 'True Self Play', 50, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
+    tester.test()

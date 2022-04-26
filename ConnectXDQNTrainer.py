@@ -1,4 +1,3 @@
-from cmath import exp
 from typing import List
 import torch
 import random
@@ -13,7 +12,7 @@ ExperienceTuple = namedtuple('ExperienceTuple', ['state', 'action', 'next_state'
 
 class ReplayMemory:
     def __init__(self, memory_size) -> None:
-        self.memory = deque(maxlen=memory_size)
+        self.memory = deque(maxlen = memory_size)
 
     def store(self, state, action, next_state, reward, done):
         self.memory.appendleft(ExperienceTuple(state, action, next_state, reward, done))
@@ -95,14 +94,18 @@ class ConvDQN(nn.Module):
 # For episode in episodes
 class DQNAgent:
     def __init__(self, env, board_width, board_height, action_states, batch_size, lr, gamma, epsilon, epsilon_decay = 0.01, min_epsilon=0.1, target_update_rate = 100, pre_trained_target = None, pre_trained_policy = None, conv_model = False) -> None:
-        self.memory = ReplayMemory(50000)
+        self.memory = ReplayMemory(5000)
+
         self.env = env
         self.board_width = board_width
         self.board_height = board_height
+
         input_size = board_width * board_height
+
         self.input_size = input_size
         self.action_states = action_states
         self.conv_model = conv_model
+
         if (self.conv_model):
             self.policy_net = ConvDQN(board_width, board_height, action_states)
             self.target_net = ConvDQN(board_width, board_height, action_states)
@@ -114,6 +117,7 @@ class DQNAgent:
             self.target_net.load_state_dict(pre_trained_target)
         else :
             self.target_net.load_state_dict(self.policy_net.state_dict())
+            
         self.target_net.eval()
         self.batch_size = batch_size
         self.optimizer = torch.optim.Adam(self.policy_net.parameters(), lr=lr)
@@ -152,17 +156,12 @@ class DQNAgent:
             # print('masked_rand')
             # print(masked_rand)
             return torch.argmax(masked_rand).view(1,1)
-            #return torch.tensor(random.randrange(self.action_states)).view(1,1)
         else:
             # Return a state based on the policy
             q_s = self.policy_net(state.unsqueeze(0))
             # Mask out illegal moves (any column with a 1 in the first space)
-            #print(state[-self.board_width:])
             # Use absolute value so that all filled spaces are 1
-            #print(illegal_move_mask)
             masked_qs = q_s + illegal_move_mask
-            # print('masked_qs')
-            # print(masked_qs)
             return torch.argmax(masked_qs).view(1,1)
 
     def experience_replay(self):
@@ -173,12 +172,7 @@ class DQNAgent:
         experience_batch = self.memory.sample(self.batch_size)
 
         transitions = ExperienceTuple(*zip(*experience_batch))
-        # print(transitions.state[0].shape)
-        # print("state")
-        # print(transitions.state)
-        # print("action")
-        # print(transitions.action)
-        # print(experience_batch[0].state.shape)
+
         if (self.conv_model):
             state_batch = torch.stack(transitions.state)
         else:
@@ -192,16 +186,6 @@ class DQNAgent:
         reward_batch = torch.cat(transitions.reward)
         # Convert to numbers to be used as a mask
         done_batch = torch.cat(transitions.done).long()
-        # print('state')
-        # print(state_batch.shape)
-        # print('action')
-        # print(action_batch.shape)
-        # print('next state')
-        # print(next_state_batch.shape)
-        # print('reward')
-        # print(reward_batch.shape)
-        # print('done')
-        # print(done_batch.shape)
 
         # Prediction is based on the target net
         # (if done then the future reward is 0 )
@@ -211,45 +195,18 @@ class DQNAgent:
         predicted = reward_batch + torch.mul((self.gamma * max_targets), done_batch)
         # expected is based on the policy net
         expected = self.policy_net(state_batch).gather(1, action_batch).squeeze()
-        # print('predicted')
-        # print(predicted.shape)
-        # print('expected')
-        # print(expected.shape)
-        # print("predicted")
-        # print(predicted.shape)
-        # print("expected")
-        # print(expected.shape)
-        #print("predicted")
-        #print(predicted)
-        #print("expected")
-        #print(expected)
+
         loss = self.loss(predicted, expected)
         loss.backward()
         batch_loss.append(int(loss))
-        # print(int(loss))
+
         self.optimizer.step()
 
         for param in self.policy_net.parameters():
             param.grad.data.clamp_(-1, 1)
-
-        # for experience in experience_batch:
-        #     # Prediction is based on the target net
-        #     # (if done then the future reward is 0 )
-        #     predicted = torch.tensor(experience.reward) + ((self.gamma * self.target_net(experience.next_state).max()) if not experience.done else 0)
-        #     # expected is based on the polic net
-        #     expected = self.policy_net(experience.state)[experience.action][0]
-        #     #print("predicted")
-        #     #print(predicted)
-        #     #print("expected")
-        #     #print(expected)
-        #     loss = self.loss(predicted, expected)
-        #     loss.backward()
-        #     # print(int(loss))
-        #     self.optimizer.step()
         
         self.epsilon = max(self.epsilon * (1 - self.epsilon_decay), self.min_epsilon)
 
-        # return 0
         return sum(batch_loss)/len(batch_loss)
 
 
@@ -286,7 +243,7 @@ class DQNAgent:
             eps_losses.append(ep_loss)
             if ep_num % self.target_update_rate == 0:
                 # Update the target net to use the trained policy net
-                # print(f'Episode {ep_num + 1} Done, Avg. Reward = {sum(ep_rewards)/len(ep_rewards)}')
+                print(f'Episode {ep_num + 1} Done, Avg. Reward = {sum(ep_rewards)/len(ep_rewards)}')
                 eps_rewards.append(sum(ep_rewards)/len(ep_rewards))
                 ep_rewards = []
                 self.target_net.load_state_dict(self.policy_net.state_dict())

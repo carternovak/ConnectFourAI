@@ -18,7 +18,7 @@ class ConnectXTester():
     def test(self, print_results = True):
         results = []
         for game in range(self.num_games):
-            winner = self.play_game(first_player=game%2)
+            winner = self.play_game(first_player=game%2, print_results = print_results)
             results.append(winner)
             if (print_results):
                 if (winner == 0):
@@ -33,17 +33,18 @@ class ConnectXTester():
         player_one_win_percent = player_one_wins/len(results)
         player_two_win_percent = player_two_wins/len(results)
         ties_percent = ties/len(results)
-        print(f'Results from {self.num_games} Games between {self.player_one_name} (Player 1) and {self.player_two_name} (Player 2)')
-        print(f'Player 1 ({self.player_one_name}) Win Percentage: {player_one_win_percent * 100}%')
-        print(f'Player 2 ({self.player_two_name}) Win Percentage: {player_two_win_percent * 100}%')
-        print(f'Tie Percentage: {ties_percent * 100}%')
-        if (player_one_wins > player_two_wins):
-            print(f'Overall Winner: Player 1 ({self.player_one_name}) with Win % {player_one_win_percent * 100}')
-        else:
-            print(f'Overall Winner: Player 2 ({self.player_two_name}) with Win % {player_two_win_percent * 100}')
+        if (print_results):
+            print(f'Results from {self.num_games} Games between {self.player_one_name} (Player 1) and {self.player_two_name} (Player 2)')
+            print(f'Player 1 ({self.player_one_name}) Win Percentage: {player_one_win_percent * 100}%')
+            print(f'Player 2 ({self.player_two_name}) Win Percentage: {player_two_win_percent * 100}%')
+            print(f'Tie Percentage: {ties_percent * 100}%')
+            if (player_one_wins > player_two_wins):
+                print(f'Overall Winner: Player 1 ({self.player_one_name}) with Win % {player_one_win_percent * 100}')
+            else:
+                print(f'Overall Winner: Player 2 ({self.player_two_name}) with Win % {player_two_win_percent * 100}')
         return results, player_one_wins, player_two_wins, ties
 
-    def play_game(self, first_player):
+    def play_game(self, first_player, print_results = False):
         # Clone the given board so that moves don't effect the base board
         test_board = self.connect_x_board.clone_board()
         while (test_board.winner == None):
@@ -54,7 +55,6 @@ class ConnectXTester():
                 if (self.pause):
                     input("(P2 Moved) Press Enter to continue...")
                 player_one_move = self.player_one.get_move(test_board)
-                print(f'(P1 Move) {player_one_move}')
                 test_board = test_board.make_move(player_one_move, 1)
                 if (test_board.winner == None):
                     if (self.render == 'pygame'):
@@ -63,7 +63,6 @@ class ConnectXTester():
                     if (self.pause):
                         input("(P1 Moved) Press Enter to continue...")
                     player_two_move = self.player_two.get_move(test_board)
-                    print(f'(P2 Move) {player_two_move}')
                     test_board = test_board.make_move(player_two_move, -1)
             else:
                 if (self.render == 'pygame'):
@@ -72,7 +71,6 @@ class ConnectXTester():
                 if (self.pause):
                     input("(P1 Moved) Press Enter to continue...")
                 player_two_move = self.player_two.get_move(test_board)
-                print(f'(P2 Move) {player_two_move}')
                 test_board = test_board.make_move(player_two_move, -1)
                 if (test_board.winner == None):
                     if (self.render == 'pygame'):
@@ -81,8 +79,7 @@ class ConnectXTester():
                     if (self.pause):
                         input("(P2 Moved) Press Enter to continue...")
                     player_one_move = self.player_one.get_move(test_board)
-                    print(f'(P1 Move) {player_one_move}')
                     test_board = test_board.make_move(player_one_move, 1)
-        print(test_board.to_string())
+        if (print_results): print(test_board.to_string())
         return test_board.winner
         
