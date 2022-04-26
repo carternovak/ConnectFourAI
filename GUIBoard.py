@@ -17,18 +17,20 @@ pygame.init()
 
 
 class GUIBoard(ConnectXBoard):
-    def __init__(self, connectXBoard=None) -> None:
+    def __init__(self, connectXBoard:ConnectXBoard = None) -> None:
         super().__init__()
-        self.connectXBoard = connectXBoard
-        if self.connectXBoard is not None:  # there is existing board
-            self.board = np.flipud(self.connectXBoard.board)
+        if connectXBoard is not None:  # there is existing board
+            self.board = connectXBoard.board
+            self.first_empty_in_col = connectXBoard.first_empty_in_col
+            self.pieces = connectXBoard.pieces
         self.screenWidth = TILESIZE * self.width
         self.screenHeight = TILESIZE * (self.height + 2)
         self.dim = (self.screenHeight, self.screenWidth)
         self.screen = pygame.display.set_mode(self.dim)
         self.drawGUIboard(connectXBoard)
 
-    def drawGUIboard(self, existingBoard=None):
+
+    def drawGUIboard(self, connectXBoard=None):
         # background
         self.screen.fill(BLACK)
 
@@ -38,6 +40,7 @@ class GUIBoard(ConnectXBoard):
                              (TILESIZE * (GUIcursor + 1) + 5.5, 75), (TILESIZE * (GUIcursor + 1) + 20, 75),
                              (TILESIZE * (GUIcursor + 1) + 1.25, 93.75), (TILESIZE * (GUIcursor + 1) - 16.5, 75),
                              (TILESIZE * (GUIcursor + 1) - 5, 75)))
+        # pygame.display.update()
 
         # board
         for row in range(self.height):
@@ -47,21 +50,28 @@ class GUIBoard(ConnectXBoard):
                 pygame.draw.circle(self.screen, BLACK,
                                    ((TILESIZE * col + TILESIZE / 2) + 50, TILESIZE * row + TILESIZE / 2 + TILESIZE),
                                    DISKRAD)
+        pygame.display.update()
 
-        # if existingBoard is not None:  # there is existing board
-        for row in range(self.height):
-            for col in range(self.width):
-                # TODO draw disks
-                if self.get_space(row, col) == -1:  # player
-                    pygame.draw.circle(self.screen, RED,
-                                       ((TILESIZE * col + TILESIZE / 2) + 50, TILESIZE * row + TILESIZE / 2 + TILESIZE),
-                                       DISKRAD)
-                elif self.get_space(row, col) == 1: # AI
-                    pygame.draw.circle(self.screen, YELLOW,
-                                       ((TILESIZE * col + TILESIZE / 2) + 50,
-                                        TILESIZE * row + TILESIZE / 2 + TILESIZE),
-                                       DISKRAD)
+        if connectXBoard != None:
+            connectXBoard.board = np.flipud(connectXBoard.board)
+            for row in range(self.height):
+                for col in range(self.width):
+                    # TODO draw disks
+                    if connectXBoard.get_space(row, col) == -1:  # player
+                        pygame.draw.circle(self.screen, RED,
+                                           ((TILESIZE * col + TILESIZE / 2) + 50, TILESIZE * row + TILESIZE / 2 + TILESIZE),
+                                           DISKRAD)
+                        pygame.display.update()
 
+                    elif connectXBoard.get_space(row, col) == 1:  # AI
+                        pygame.draw.circle(self.screen, YELLOW,
+                                           ((TILESIZE * col + TILESIZE / 2) + 50,
+                                            TILESIZE * row + TILESIZE / 2 + TILESIZE),
+                                           DISKRAD)
+                        pygame.display.update()
+
+        if connectXBoard != None:
+            connectXBoard.board = np.flipud(connectXBoard.board)
         pygame.display.update()
 
 
@@ -71,7 +81,6 @@ if __name__ == '__main__':
     gui = GUIBoard()
 
     while running:
-        gui.drawGUIboard()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
