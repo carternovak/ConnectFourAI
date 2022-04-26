@@ -1,7 +1,8 @@
+import numpy as np
 import pygame
 import sys
 from ConnectXBoard import *
-from players.HumanConnect4Player import HumanConnect4Player
+from HumanConnect4Player import HumanConnect4Player
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -14,29 +15,29 @@ GUIcursor = 0
 running = True
 pygame.init()
 
+
 class GUIBoard(ConnectXBoard):
     def __init__(self, connectXBoard=None) -> None:
         super().__init__()
-
-
         self.connectXBoard = connectXBoard
-
+        if self.connectXBoard is not None:  # there is existing board
+            self.board = np.flipud(self.connectXBoard.board)
         self.screenWidth = TILESIZE * self.width
         self.screenHeight = TILESIZE * (self.height + 2)
         self.dim = (self.screenHeight, self.screenWidth)
         self.screen = pygame.display.set_mode(self.dim)
-        self.drawGUIboard()
+        self.drawGUIboard(connectXBoard)
 
-    def drawGUIboard(self):
+    def drawGUIboard(self, existingBoard=None):
         # background
         self.screen.fill(BLACK)
 
         # arrow
         pygame.draw.polygon(self.screen, WHITE,
-                            ((TILESIZE * (GUIcursor+1)-5, 50),             (TILESIZE * (GUIcursor+1) + 6.5, 50),
-                             (TILESIZE * (GUIcursor+1) + 5.5, 75),      (TILESIZE * (GUIcursor+1) + 20, 75),
-                             (TILESIZE * (GUIcursor+1) + 1.25, 93.75),   (TILESIZE * (GUIcursor+1) - 16.5, 75),
-                             (TILESIZE * (GUIcursor+1)-5, 75)))
+                            ((TILESIZE * (GUIcursor + 1) - 5, 50), (TILESIZE * (GUIcursor + 1) + 6.5, 50),
+                             (TILESIZE * (GUIcursor + 1) + 5.5, 75), (TILESIZE * (GUIcursor + 1) + 20, 75),
+                             (TILESIZE * (GUIcursor + 1) + 1.25, 93.75), (TILESIZE * (GUIcursor + 1) - 16.5, 75),
+                             (TILESIZE * (GUIcursor + 1) - 5, 75)))
 
         # board
         for row in range(self.height):
@@ -46,16 +47,26 @@ class GUIBoard(ConnectXBoard):
                 pygame.draw.circle(self.screen, BLACK,
                                    ((TILESIZE * col + TILESIZE / 2) + 50, TILESIZE * row + TILESIZE / 2 + TILESIZE),
                                    DISKRAD)
-        # for row in range(self.height):
-        #     for col in range(self.width):
-        #         TODO draw disks
 
+        # if existingBoard is not None:  # there is existing board
+        for row in range(self.height):
+            for col in range(self.width):
+                # TODO draw disks
+                if self.get_space(row, col) == -1:  # player
+                    pygame.draw.circle(self.screen, RED,
+                                       ((TILESIZE * col + TILESIZE / 2) + 50, TILESIZE * row + TILESIZE / 2 + TILESIZE),
+                                       DISKRAD)
+                elif self.get_space(row, col) == 1: # AI
+                    pygame.draw.circle(self.screen, YELLOW,
+                                       ((TILESIZE * col + TILESIZE / 2) + 50,
+                                        TILESIZE * row + TILESIZE / 2 + TILESIZE),
+                                       DISKRAD)
 
         pygame.display.update()
 
 
 if __name__ == '__main__':
-    test_board = ConnectXBoard(height=7, width=6, x=4)
+    test_board = ConnectXBoard(height=6, width=7, x=4)
     humanPlayer = HumanConnect4Player()
     gui = GUIBoard()
 
@@ -77,9 +88,8 @@ if __name__ == '__main__':
 
                 if event.key == pygame.K_SPACE:
                     # TODO: space key. make move if valid
-                    print()
-                    gui = gui.make_move(GUIcursor, humanPlayer.player)
+                    gui = GUIBoard(gui.make_move(GUIcursor, humanPlayer.player))
                     print(gui.to_string())
-                    print(gui.to_array())
+                    # print(gui.to_array())
 
             # pygame.display.update()
