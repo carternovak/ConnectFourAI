@@ -35,7 +35,7 @@ class ConnectXGym(gym.Env):
             self.board = self.board.make_move(action, self.player_num)
             if (self.board.winner == self.player_num):
                 # If you won very good
-                reward = 1
+                reward = 100
                 info = {"Reason":"Won"}
 
             # Only make the opponent move if you haven't already won
@@ -45,11 +45,11 @@ class ConnectXGym(gym.Env):
                 if (self.board.winner != None):
                     if (self.board.winner != self.player_num):
                         # If you allowed your opponent to win, bad
-                        reward = -1
+                        reward = -500
                         info = {"Reason":"Move resulted in other player winning"}
                     if (self.board.winner == 0):
                         # If you forced tie, ok
-                        reward = 0
+                        reward = 0.5
                         info = {"Reason":"Move resulted in tie"}
         
         state = self.board.to_tensor()

@@ -27,12 +27,12 @@ class DQN(nn.Module):
 
     def __init__(self, input_size, action_states, dropout = None) -> None:
         super(DQN, self).__init__()
-        self.l1 = nn.Linear(input_size, 35)
-        self.l2 = nn.Linear(35, 30)
-        self.l3 = nn.Linear(30, 25)
-        self.l4 = nn.Linear(25, 20)
-        self.l5 = nn.Linear(20, 15)
-        self.l6 = nn.Linear(15, action_states)
+        self.l1 = nn.Linear(input_size, 50)
+        self.l2 = nn.Linear(50, 50)
+        self.l3 = nn.Linear(50, 50)
+        self.l4 = nn.Linear(50, 50)
+        self.l5 = nn.Linear(50, 50)
+        self.l6 = nn.Linear(50, action_states)
         self.relu = nn.ReLU()
         if dropout:
             self.dropout = nn.Dropout(p = dropout)
@@ -191,7 +191,7 @@ class DQNAgent:
         # (if done then the future reward is 0 )
         targets = self.target_net(next_state_batch)
         # Get the max for each element of the batch
-        max_targets = targets.max(dim=1).values
+        max_targets = targets.max(dim = 1).values
         predicted = reward_batch + torch.mul((self.gamma * max_targets), done_batch)
         # expected is based on the policy net
         expected = self.policy_net(state_batch).gather(1, action_batch).squeeze()
