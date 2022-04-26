@@ -19,8 +19,8 @@ def self_play(board, generations, episodes_per_generation = 5000, learning_episo
                             min_epsilon=0.05, 
                             gamma=.5, 
                             lr=0.0001,
-                            pre_trained_policy=torch.load('good-conv-p1-policy.pt'),
-                            pre_trained_target=torch.load('good-conv-p1-target.pt'))
+                            pre_trained_policy=torch.load('1-self-play-policy.pt'),
+                            pre_trained_target=torch.load('1-self-play-target.pt'))
                         
     env = ConnectXGym(ConnectXBoard(), DQNConnect4Player(practice_agent), 1, -1)
 

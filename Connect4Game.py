@@ -3,6 +3,7 @@ from ConnectXBoard import ConnectXBoard
 from AlphaBetaConnect4Player import AlphaBetaConnect4Player
 from ConnectXHeuristics import partial_lines_heuristic, dist_heuristic
 from DQNConnect4Player import DQNConnect4Player
+from ConnectXDQNTrainer import DQNAgent
 import torch
 import pygame
 import sys
@@ -54,20 +55,20 @@ class Connect4Game:
                 return
 
 if __name__ == '__main__':
-    test_board = ConnectXBoard(height=7, width=6, x=4)
-    good_conv = DQNAgent(ConnectXGym(ConnectXBoard(), None, 1, -1), 
+    test_board = ConnectXBoard()
+    good_conv = DQNAgent(None, 
                         conv_model=True, 
-                        board_width=board.width, 
-                        board_height=board.height, 
-                        action_states=board.width, 
+                        board_width=test_board.width, 
+                        board_height=test_board.height, 
+                        action_states=test_board.width, 
                         batch_size=100, 
                         epsilon=.999, 
                         epsilon_decay=0.01, 
                         min_epsilon=0.05, 
                         gamma=.5, 
                         lr=0.0001,
-                        pre_trained_policy=torch.load('good-conv-p1-policy.pt'),
-                        pre_trained_target=torch.load('good-conv-p1-target.pt'))
+                        pre_trained_policy=torch.load('good-dqn-policy.pt'),
+                        pre_trained_target=torch.load('good-dqn-target.pt'))
     while True:
         print('New Game')
-        game = Connect4Game(test_board, DQNConnect4Player(good_conv, -1, 150), move_delay=0.5)
+        game = Connect4Game(test_board, DQNConnect4Player(good_conv), move_delay=0.5)
