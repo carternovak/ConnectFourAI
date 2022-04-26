@@ -1,5 +1,18 @@
 import random
-from collections import Set
+#from collections import Set
+
+def heuristic(self, ConnectXBoard):
+    p1_score = 0
+    p2_score = 0
+    p1 = ConnectXBoard
+    p2 = ConnectXBoard
+
+#     for i in range(self.width):
+# #          if  all 4 in a row, then p1 max and vice versa
+# #
+# # #        whatever number in a row, that number to the power of the same number and vice versa
+# #
+# # #        return that
 
 def manhattan_distance(point1, point2):
     dist = 0
@@ -18,7 +31,6 @@ def get_mean_of_points(points):
     for dim in zip(*points):
         mean.append(sum(dim)/len(dim))
     return mean
-
 
 def dist_heuristic(board):
     # Calculate the distance of each players piece from the mean of their pieces
