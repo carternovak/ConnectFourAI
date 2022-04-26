@@ -67,9 +67,9 @@ def self_play(board, generations, episodes_per_generation = 5000, learning_episo
 def true_self_play(board, generations, episodes_per_generation = 5000, random_episodes = 500):
         rand_model = RandomConnect4Player()
         env = ConnectXGym(ConnectXBoard(), rand_model, 1, -1)
-        starting_model = DQNAgent(env, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.001, gamma=0.9, epsilon=0.9, epsilon_decay=0.001, min_epsilon=0.05)
+        starting_model = DQNAgent(env, board.width, board.height, board.width, conv_model = True, batch_size=128, lr=0.001, gamma=0.9, epsilon=0.9, epsilon_decay=0.001, min_epsilon=0.05)
         starting_model.train(random_episodes)
-        competitor_model = DQNAgent(env, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.001, gamma=0.9, epsilon=0.9, epsilon_decay=0.001, min_epsilon=0.05)
+        competitor_model = DQNAgent(env, board.width, board.height, board.width, conv_model = True, batch_size=128, lr=0.001, gamma=0.9, epsilon=0.9, epsilon_decay=0.001, min_epsilon=0.05)
         competitor_model.policy_net.load_state_dict(starting_model.policy_net.state_dict())
         competitor_model.policy_net.load_state_dict(starting_model.policy_net.state_dict())
         starting_model.env.other_player = DQNConnect4Player(competitor_model)

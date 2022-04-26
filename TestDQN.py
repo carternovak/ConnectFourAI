@@ -100,10 +100,10 @@ if __name__ == '__main__':
 
     # self_play_agent = self_play(ConnectXBoard(), 5, episodes_per_generation=1000, learning_episodes=1000)
     # self_player = DQNConnect4Player(self_play_agent)
-    true_self_play_agent = true_self_play(ConnectXBoard(), 5, episodes_per_generation=1000, random_episodes=1000)
+    true_self_play_agent = true_self_play(ConnectXBoard(), 15, episodes_per_generation=1000, random_episodes=1000)
     true_self_player = DQNConnect4Player(true_self_play_agent)
     sse_player = AlphaBetaConnect4Player(dist_heuristic, 1, 75)
-    lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 75)
+    lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 25)
     dqn_player = DQNConnect4Player(agent)
     random_player = RandomConnect4Player()
     human_player = HumanConnect4Player()
@@ -114,5 +114,5 @@ if __name__ == '__main__':
 
     # print(compare(rand_player_one.policy_net, rand_player_two.policy_net))
 
-    tester = ConnectXTester(sse_player, 'SSE', true_self_player, 'True Self Play', 50, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
+    tester = ConnectXTester(lines_player, 'Lines', true_self_player, 'True Self Play', 20, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
     tester.test()

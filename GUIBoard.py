@@ -24,6 +24,7 @@ class GUIBoard(ConnectXBoard):
         self.dim = (self.screenWidth, self.screenHeight)
         self.screen = pygame.display.set_mode(self.dim)
         self.board = board
+        self.cursor_loc = 0
 
     def drawGUIboard(self):
         # background
@@ -31,10 +32,10 @@ class GUIBoard(ConnectXBoard):
 
         # arrow
         pygame.draw.polygon(self.screen, WHITE,
-                            ((TILESIZE * (GUIcursor+1)-5, 50),             (TILESIZE * (GUIcursor+1) + 6.5, 50),
-                             (TILESIZE * (GUIcursor+1) + 5.5, 75),      (TILESIZE * (GUIcursor+1) + 20, 75),
-                             (TILESIZE * (GUIcursor+1) + 1.25, 93.75),   (TILESIZE * (GUIcursor+1) - 16.5, 75),
-                             (TILESIZE * (GUIcursor+1)-5, 75)))
+                            ((TILESIZE * (self.cursor_loc+1)-5, 50),            (TILESIZE * (self.cursor_loc+1) + 6.5, 50),
+                             (TILESIZE * (self.cursor_loc+1) + 5.5, 75),      (TILESIZE * (self.cursor_loc+1) + 20, 75),
+                             (TILESIZE * (self.cursor_loc+1) + 1.25, 93.75),   (TILESIZE * (self.cursor_loc+1) - 16.5, 75),
+                             (TILESIZE * (self.cursor_loc+1)-5, 75)))
 
         # board
         for row in range(self.board.height):

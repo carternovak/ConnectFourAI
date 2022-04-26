@@ -243,7 +243,7 @@ class DQNAgent:
             eps_losses.append(ep_loss)
             if ep_num % self.target_update_rate == 0:
                 # Update the target net to use the trained policy net
-                print(f'Episode {ep_num + 1} Done, Avg. Reward = {sum(ep_rewards)/len(ep_rewards)}')
+                # print(f'Episode {ep_num + 1} Done, Avg. Reward = {sum(ep_rewards)/len(ep_rewards)}')
                 eps_rewards.append(sum(ep_rewards)/len(ep_rewards))
                 ep_rewards = []
                 self.target_net.load_state_dict(self.policy_net.state_dict())
