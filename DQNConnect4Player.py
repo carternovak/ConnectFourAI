@@ -7,6 +7,9 @@ class DQNConnect4Player():
         # Picks the best move for the given board, return the column number for the move
         best_move = self.dqn_agent.get_move_private(board.to_tensor())
         while best_move not in board.get_available_moves():
-            print('illegal move')
+            print('move')
+            print(best_move)
+            print('valid moves')
+            print(board.get_available_moves())
             best_move = self.dqn_agent.get_move_private(board.to_tensor())
         return best_move

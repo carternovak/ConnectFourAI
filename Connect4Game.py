@@ -67,8 +67,8 @@ if __name__ == '__main__':
                         min_epsilon=0.05, 
                         gamma=.5, 
                         lr=0.0001,
-                        pre_trained_policy=torch.load('good-dqn-policy.pt'),
-                        pre_trained_target=torch.load('good-dqn-target.pt'))
+                        pre_trained_policy=torch.load('long-self-play-policy.pt'),
+                        pre_trained_target=torch.load('long-self-play-target.pt'))
     while True:
         print('New Game')
-        game = Connect4Game(test_board, DQNConnect4Player(good_conv), move_delay=0.5)
+        game = Connect4Game(test_board, AlphaBetaConnect4Player(partial_lines_heuristic, -1, max_depth=25), move_delay=0.5)

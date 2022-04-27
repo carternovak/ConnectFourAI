@@ -35,12 +35,12 @@ def self_play(board, generations, episodes_per_generation = 5000, learning_episo
     for generation in range(generations):
 
         # Create two new models, train them against the existing one and compare their results
-        new_env = ConnectXGym(ConnectXBoard(), DQNConnect4Player(best_model), 1, -1)
-        new_model1 = DQNAgent(new_env, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.9, epsilon=0.9, epsilon_decay=0.001, min_epsilon=0.05)
+        new_env1 = ConnectXGym(ConnectXBoard(), DQNConnect4Player(best_model), 1, -1)
+        new_model1 = DQNAgent(new_env1, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.9, epsilon=0.3, epsilon_decay=0.001, min_epsilon=0.05)
         new_model1.train(episodes_per_generation)
 
-        new_env = ConnectXGym(ConnectXBoard(), DQNConnect4Player(best_model), 1, -1)
-        new_model2 = DQNAgent(new_env, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.9, epsilon=0.9, epsilon_decay=0.001, min_epsilon=0.05)
+        new_env2 = ConnectXGym(ConnectXBoard(), DQNConnect4Player(best_model), 1, -1)
+        new_model2 = DQNAgent(new_env2, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.9, epsilon=0.3, epsilon_decay=0.001, min_epsilon=0.05)
         new_model2.train(episodes_per_generation)
 
         # best_model.env.other_player = DQNConnect4Player(new_model)
@@ -64,11 +64,12 @@ def self_play(board, generations, episodes_per_generation = 5000, learning_episo
     # Repeat X times
     return best_model
 
-def true_self_play(board, generations, episodes_per_generation = 5000, random_episodes = 500):
+def true_self_play(board, generations, episodes_per_generation = 5000, learning_episodes = 500):
+    
         rand_model = RandomConnect4Player()
         env = ConnectXGym(ConnectXBoard(), rand_model, 1, -1)
         starting_model = DQNAgent(env, board.width, board.height, board.width, conv_model = True, batch_size=128, lr=0.001, gamma=0.9, epsilon=0.9, epsilon_decay=0.001, min_epsilon=0.05)
-        starting_model.train(random_episodes)
+        starting_model.train(learning_episodes)
         competitor_model = DQNAgent(env, board.width, board.height, board.width, conv_model = True, batch_size=128, lr=0.001, gamma=0.9, epsilon=0.9, epsilon_decay=0.001, min_epsilon=0.05)
         competitor_model.policy_net.load_state_dict(starting_model.policy_net.state_dict())
         competitor_model.policy_net.load_state_dict(starting_model.policy_net.state_dict())

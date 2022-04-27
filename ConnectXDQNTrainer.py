@@ -151,7 +151,7 @@ class DQNAgent:
             rand_tensor = torch.rand(self.action_states)
             #print(state[-self.board_width:])
             # Use absolute value so that all filled spaces are 1
-            #print(illegal_move_mask)
+            # print(illegal_move_mask)
             masked_rand = rand_tensor + illegal_move_mask
             # print('masked_rand')
             # print(masked_rand)
@@ -162,6 +162,7 @@ class DQNAgent:
             # Mask out illegal moves (any column with a 1 in the first space)
             # Use absolute value so that all filled spaces are 1
             masked_qs = q_s + illegal_move_mask
+            # print(masked_qs)
             return torch.argmax(masked_qs).view(1,1)
 
     def experience_replay(self):
@@ -228,6 +229,7 @@ class DQNAgent:
                 # self.env.render(mode="human")
                 action = self.predict(state)
                 next_state, reward, done, info = self.env.step(action)
+                # print(info)
                 if (self.conv_model):
                     # Convert 1d input to 2d
                     # print(next_state)
