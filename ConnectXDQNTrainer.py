@@ -193,9 +193,12 @@ class DQNAgent:
         targets = self.target_net(next_state_batch)
         # Get the max for each element of the batch
         max_targets = targets.max(dim = 1).values
+
         predicted = reward_batch + torch.mul((self.gamma * max_targets), done_batch)
         # expected is based on the policy net
         expected = self.policy_net(state_batch).gather(1, action_batch).squeeze()
+
+        self.optimizer.zero_grad()
 
         loss = self.loss(predicted, expected)
         loss.backward()
@@ -208,6 +211,7 @@ class DQNAgent:
         
         self.epsilon = max(self.epsilon * (1 - self.epsilon_decay), self.min_epsilon)
 
+        # print(self.epsilon)
         return sum(batch_loss)/len(batch_loss)
 
 
@@ -239,8 +243,8 @@ class DQNAgent:
                 self.memory.store(state, action, next_state, torch.tensor([reward]), torch.tensor([done]))
                 state = next_state
                 # optimize the model
-                batch_loss = self.experience_replay()
-                ep_loss += batch_loss
+            batch_loss = self.experience_replay()
+            ep_loss += batch_loss
 
             eps_losses.append(ep_loss)
             if ep_num % self.target_update_rate == 0:

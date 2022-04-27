@@ -100,7 +100,7 @@ if __name__ == '__main__':
 
     # self_play_agent = self_play(ConnectXBoard(), 5, episodes_per_generation=1000, learning_episodes=1000)
     # self_player = DQNConnect4Player(self_play_agent)
-    true_self_play_agent = true_self_play(ConnectXBoard(), 5, episodes_per_generation=1000, learning_episodes=1000)
+    true_self_play_agent = self_play(ConnectXBoard(), 5, episodes_per_generation=300, learning_episodes=300)
     true_self_player = DQNConnect4Player(true_self_play_agent)
     sse_player = AlphaBetaConnect4Player(dist_heuristic, 1, 75)
     lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 25)

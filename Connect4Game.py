@@ -23,9 +23,8 @@ class Connect4Game:
     def game(self):
         running = True
         while running:
-            self.gui.drawGUIboard()
+            self.gui.draw_board()
             if (self.gui.board.winner == None):
-                self.gui.drawGUIboard()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
@@ -57,7 +56,7 @@ class Connect4Game:
 if __name__ == '__main__':
     test_board = ConnectXBoard()
     good_conv = DQNAgent(None, 
-                        conv_model=True, 
+                        conv_model=False, 
                         board_width=test_board.width, 
                         board_height=test_board.height, 
                         action_states=test_board.width, 
@@ -67,8 +66,8 @@ if __name__ == '__main__':
                         min_epsilon=0.05, 
                         gamma=.5, 
                         lr=0.0001,
-                        pre_trained_policy=torch.load('long-self-play-policy.pt'),
-                        pre_trained_target=torch.load('long-self-play-target.pt'))
+                        pre_trained_policy=torch.load('test-self-play-policy.pt'),
+                        pre_trained_target=torch.load('test-self-play-target.pt'))
     while True:
         print('New Game')
-        game = Connect4Game(test_board, AlphaBetaConnect4Player(partial_lines_heuristic, -1, max_depth=25), move_delay=0.5)
+        game = Connect4Game(test_board, DQNConnect4Player(good_conv), move_delay=0.5)

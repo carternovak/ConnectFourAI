@@ -8,23 +8,23 @@ from ConnectXTester import ConnectXTester
 
 def self_play(board, generations, episodes_per_generation = 5000, learning_episodes = 500):
 
-    practice_agent = DQNAgent(ConnectXGym(ConnectXBoard(), None, 1, -1), 
-                            conv_model=True, 
-                            board_width=board.width, 
-                            board_height=board.height, 
-                            action_states=board.width, 
-                            batch_size=100, 
-                            epsilon=.999, 
-                            epsilon_decay=0.01, 
-                            min_epsilon=0.05, 
-                            gamma=.5, 
-                            lr=0.0001,
-                            pre_trained_policy=torch.load('1-self-play-policy.pt'),
-                            pre_trained_target=torch.load('1-self-play-target.pt'))
+    # practice_agent = DQNAgent(ConnectXGym(ConnectXBoard(), None, 1, -1), 
+    #                         conv_model=True, 
+    #                         board_width=board.width, 
+    #                         board_height=board.height, 
+    #                         action_states=board.width, 
+    #                         batch_size=100, 
+    #                         epsilon=.999, 
+    #                         epsilon_decay=0.01, 
+    #                         min_epsilon=0.05, 
+    #                         gamma=.5, 
+    #                         lr=0.0001,
+    #                         pre_trained_policy=torch.load('1-self-play-policy.pt'),
+    #                         pre_trained_target=torch.load('1-self-play-target.pt'))
                         
-    env = ConnectXGym(ConnectXBoard(), DQNConnect4Player(practice_agent), 1, -1)
+    env = ConnectXGym(ConnectXBoard(), RandomConnect4Player(), 1, -1)
 
-    starting_model = DQNAgent(env, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.7, epsilon=0.9, epsilon_decay=0.001, min_epsilon=0.05)
+    starting_model = DQNAgent(env, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.7, epsilon=0.9, epsilon_decay=0.0001, min_epsilon=0.05)
     # Train the model against a random player for a few iterations
 
     starting_model.train(learning_episodes)
@@ -36,11 +36,11 @@ def self_play(board, generations, episodes_per_generation = 5000, learning_episo
 
         # Create two new models, train them against the existing one and compare their results
         new_env1 = ConnectXGym(ConnectXBoard(), DQNConnect4Player(best_model), 1, -1)
-        new_model1 = DQNAgent(new_env1, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.9, epsilon=0.3, epsilon_decay=0.001, min_epsilon=0.05)
+        new_model1 = DQNAgent(new_env1, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.9, epsilon=0.9, epsilon_decay=0.0001, min_epsilon=0.05)
         new_model1.train(episodes_per_generation)
 
         new_env2 = ConnectXGym(ConnectXBoard(), DQNConnect4Player(best_model), 1, -1)
-        new_model2 = DQNAgent(new_env2, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.9, epsilon=0.3, epsilon_decay=0.001, min_epsilon=0.05)
+        new_model2 = DQNAgent(new_env2, board.width, board.height, board.width, conv_model = False, batch_size=128, lr=0.005, gamma=0.9, epsilon=0.9, epsilon_decay=0.0001, min_epsilon=0.05)
         new_model2.train(episodes_per_generation)
 
         # best_model.env.other_player = DQNConnect4Player(new_model)
