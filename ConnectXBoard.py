@@ -6,7 +6,7 @@ import torch
 class ConnectXBoard:
 
     # X represents the number of pieces a player needs to get in a row to win (4 for regular Connect 4)
-    def __init__(self, height=7, width=6, x=4, existing_board = None):
+    def __init__(self, height=6, width=7, x=4, existing_board = None):
         self.height = height
         self.width = width
         self.x = x

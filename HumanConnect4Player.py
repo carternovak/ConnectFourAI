@@ -3,6 +3,8 @@ from BaseConnect4Player import *
 
 class HumanConnect4Player(BaseConnect4Player):
     def __init__(self):
+        super().__init__()
+        self.player = -1
         pass
 
     def get_move(self, board):
