@@ -100,10 +100,17 @@ class ConnectXBoard:
     def check_for_win(self, row, col):
         starts_and_offsets = [
                                 ((row, 0), (0,1)), 
-                                ((0, col), (1,0)), 
-                                ((row - col, col), (1,-1)), 
-                                ((row, col - row), (-1,1))
+                                ((0, col), (1,0))
                                 ]
+        # weird stuff to make diagonals work
+        if (row > col):
+            starts_and_offsets.append((((row - col), 0), (1,1)))
+            starts_and_offsets.append((((row + col), 0), (-1,1)))
+        else:
+            starts_and_offsets.append(((0, (col - row)), (1,1)))
+            starts_and_offsets.append(((0, (col - row)), (-1,1)))
+        # print(col - row)
+        # print(row + col)
         for (start, offset) in starts_and_offsets:
             winner = self.check_row(start, offset)
             if (winner != 0):
@@ -112,7 +119,7 @@ class ConnectXBoard:
     
     def check_row(self, start_pos, offset):
         tracked_piece = None
-        num_in_a_row = 1
+        num_in_a_row = 0
         curr_row, curr_col = start_pos
         row_offset, col_offset = offset
         while self.is_on_board(curr_row, curr_col):
@@ -233,15 +240,21 @@ if __name__ == '__main__':
     # start_game()
     board = ConnectXBoard()
     #print(game.board)
-    new_board = board.make_move(4, -1)
+    new_board = board.make_move(4, 1)
     # new_board = new_board.make_move(6, 1)
     print(new_board.winner)
     new_board = new_board.make_move(1, -1)
+    new_board = new_board.make_move(4, -1)
+    new_board = new_board.make_move(4, -1)
+    new_board = new_board.make_move(4, -1)
     # new_board = new_board.make_move(0, 1)
     print(new_board.winner)
     new_board = new_board.make_move(3, -1)
+    new_board = new_board.make_move(3, -1)
+    new_board = new_board.make_move(3, -1)
     # new_board = new_board.make_move(5, 1)
     print(new_board.winner)
+    new_board = new_board.make_move(2, -1)
     new_board = new_board.make_move(2, -1)
     print(new_board.to_string())
     print(new_board.winner)

@@ -1,3 +1,4 @@
+from RandomConnect4Player import RandomConnect4Player
 from GUIBoard import GUIBoard
 from ConnectXBoard import ConnectXBoard
 from AlphaBetaConnect4Player import AlphaBetaConnect4Player
@@ -70,4 +71,4 @@ if __name__ == '__main__':
                         pre_trained_target=torch.load('test-self-play-target.pt'))
     while True:
         print('New Game')
-        game = Connect4Game(test_board, AlphaBetaConnect4Player(table_heuristic, -1, 100), move_delay=0.5)
+        game = Connect4Game(test_board, RandomConnect4Player(), move_delay=0.5)
