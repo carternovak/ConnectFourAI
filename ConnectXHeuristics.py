@@ -1,4 +1,5 @@
 import random
+import numpy as np
 #from collections import Set
 
 def heuristic(self, ConnectXBoard):
@@ -121,6 +122,23 @@ def partial_lines_heuristic(board):
     # print(partial_line_weights)
     # print(heuristic_value)
     return heuristic_value
+
+def table_heuristic(board):
+    val_table = [
+        [3,4,5,7,5,4,3],
+        [4,6,8,10,8,6,4],
+        [5,8,11,13,11,8,5],
+        [5,8,11,13,11,8,5],
+        [4,6,8,10,8,6,4],
+        [3,4,5,7,5,4,3],
+    ]
+    val_array = np.array(val_table)
+    weighted_array = np.array(board.to_array()) * val_array
+    summed_arr = sum(sum(weighted_array))
+    # print(weighted_array)
+    # print(summed_arr)
+    return summed_arr
+
 
 def random_heuristic(board):
     return random.uniform(-0.999, 0.999)

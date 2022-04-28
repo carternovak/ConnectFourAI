@@ -98,49 +98,84 @@ class ConnectXBoard:
         return last_space
 
     def check_for_win(self, row, col):
-        if len(self.get_available_moves()) <= 0: return 0
-        # Get the row and col of the move
-        # Check up and down
-        up = [(row + x, col) for x in range(self.x)]
-        up_win = self.is_win(up)
-        if up_win != None:
-            # print('Winning Spots:')
-            # print(up)
-            return up_win
-        down = [(row - x, col) for x in range(self.x)]
-        down_win = self.is_win(down)
-        if down_win != None:
-            # print('Winning Spots:')
-            # print(down)
-            return down_win
-        # Check left and right
-        right = [(row, col + x) for x in range(self.x)]
-        right_win = self.is_win(right)
-        if right_win != None:
-            # print('Winning Spots:')
-            # print(right)
-            return right_win
-        left = [(row, col - x) for x in range(self.x)]
-        left_win = self.is_win(left)
-        if left_win != None:
-            # print('Winning Spots:')
-            # print(left)
-            return left_win
-        # Check diagonals
-        diagonals = [
-            [(row - x, col - x) for x in range(self.x)],
-            [(row - x, col + x) for x in range(self.x)],
-            [(row + x, col + x) for x in range(self.x)],
-            [(row + x, col - x) for x in range(self.x)]
-        ]
-        for diagonal in diagonals:
-            diagonal_win = self.is_win(diagonal)
-            if diagonal_win != None:
-                # print('Winning Spots:')
-                # print(diagonals)
-                return diagonal_win
-        # If someone hasn't won after all these checks then no one has won
+        starts_and_offsets = [
+                                ((row, 0), (0,1)), 
+                                ((0, col), (1,0)), 
+                                ((row - col, col), (1,-1)), 
+                                ((row, col - row), (-1,1))
+                                ]
+        for (start, offset) in starts_and_offsets:
+            winner = self.check_row(start, offset)
+            if (winner != 0):
+                return winner
         return None
+    
+    def check_row(self, start_pos, offset):
+        tracked_piece = None
+        num_in_a_row = 1
+        curr_row, curr_col = start_pos
+        row_offset, col_offset = offset
+        while self.is_on_board(curr_row, curr_col):
+            space = self.get_space(curr_row, curr_col)
+            # If the new piece is the same as the last one then increase the number in a row
+            if (tracked_piece == None or tracked_piece == space):
+                num_in_a_row += 1
+            else:
+                # If the new one is different then the previous, reset
+                num_in_a_row = 1
+            # If there are enough in a row to win, then return the winner
+            if (tracked_piece != None and tracked_piece != 0 and num_in_a_row >= self.x):
+                return tracked_piece
+            tracked_piece = space
+            # Move to the next space
+            curr_row += row_offset
+            curr_col += col_offset
+        return 0
+
+    # def check_for_win(self, row, col):
+    #     if len(self.get_available_moves()) <= 0: return 0
+    #     # Get the row and col of the move
+    #     # Check up and down
+    #     up = [(row + x, col) for x in range(self.x)]
+    #     up_win = self.is_win(up)
+    #     if up_win != None:
+    #         # print('Winning Spots:')
+    #         # print(up)
+    #         return up_win
+    #     down = [(row - x, col) for x in range(self.x)]
+    #     down_win = self.is_win(down)
+    #     if down_win != None:
+    #         # print('Winning Spots:')
+    #         # print(down)
+    #         return down_win
+    #     # Check left and right
+    #     right = [(row, col + x) for x in range(self.x)]
+    #     right_win = self.is_win(right)
+    #     if right_win != None:
+    #         # print('Winning Spots:')
+    #         # print(right)
+    #         return right_win
+    #     left = [(row, col - x) for x in range(self.x)]
+    #     left_win = self.is_win(left)
+    #     if left_win != None:
+    #         # print('Winning Spots:')
+    #         # print(left)
+    #         return left_win
+    #     # Check diagonals
+    #     diagonals = [
+    #         [(row - x, col - x) for x in range(self.x)],
+    #         [(row - x, col + x) for x in range(self.x)],
+    #         [(row + x, col + x) for x in range(self.x)],
+    #         [(row + x, col - x) for x in range(self.x)]
+    #     ]
+    #     for diagonal in diagonals:
+    #         diagonal_win = self.is_win(diagonal)
+    #         if diagonal_win != None:
+    #             # print('Winning Spots:')
+    #             # print(diagonals)
+    #             return diagonal_win
+    #     # If someone hasn't won after all these checks then no one has won
+    #     return None
 
         # Gets the columns that can have a piece placed in them
     def get_available_moves(self):
@@ -198,5 +233,15 @@ if __name__ == '__main__':
     # start_game()
     board = ConnectXBoard()
     #print(game.board)
-    new_board = board.make_move(0, 1)
-    print(new_board.to_vector())
+    new_board = board.make_move(4, -1)
+    # new_board = new_board.make_move(6, 1)
+    print(new_board.winner)
+    new_board = new_board.make_move(1, -1)
+    # new_board = new_board.make_move(0, 1)
+    print(new_board.winner)
+    new_board = new_board.make_move(3, -1)
+    # new_board = new_board.make_move(5, 1)
+    print(new_board.winner)
+    new_board = new_board.make_move(2, -1)
+    print(new_board.to_string())
+    print(new_board.winner)

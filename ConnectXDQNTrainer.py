@@ -63,7 +63,6 @@ class ConvDQN(nn.Module):
         self.bn16 = nn.BatchNorm2d(16)
         self.conv2 = nn.Conv2d(16, 32, kernel_size, stride)
         self.bn32 = nn.BatchNorm2d(32)
-        # self.conv3 = nn.Conv2d(32, 32, kernel_size, stride)
 
         # SOURCE: https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
         def conv2d_size_out(size, kernel_size = 2, stride = 1):
@@ -79,12 +78,9 @@ class ConvDQN(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x):
-        # print(x.shape)
         x = self.relu(self.bn16(self.conv1(x)))
         x = self.relu(self.bn32(self.conv2(x)))
-        # x = self.relu(self.bn32(self.conv3(x)))
         x = x.view(x.size(0), -1)
-        # print(x.shape)
         x = self.relu(self.l1(x))
         # Don't use ReLu fo the last one
         x = self.l2(x)
@@ -112,6 +108,7 @@ class DQNAgent:
         else:
             self.policy_net = DQN(input_size, action_states)
             self.target_net = DQN(input_size, action_states)
+
         if (pre_trained_policy and pre_trained_target):
             self.policy_net.load_state_dict(pre_trained_policy)
             self.target_net.load_state_dict(pre_trained_target)
@@ -149,12 +146,10 @@ class DQNAgent:
             # Mask out illegal moves
             # return the max
             rand_tensor = torch.rand(self.action_states)
-            #print(state[-self.board_width:])
+
             # Use absolute value so that all filled spaces are 1
-            # print(illegal_move_mask)
             masked_rand = rand_tensor + illegal_move_mask
-            # print('masked_rand')
-            # print(masked_rand)
+
             return torch.argmax(masked_rand).view(1,1)
         else:
             # Return a state based on the policy
@@ -162,7 +157,7 @@ class DQNAgent:
             # Mask out illegal moves (any column with a 1 in the first space)
             # Use absolute value so that all filled spaces are 1
             masked_qs = q_s + illegal_move_mask
-            # print(masked_qs)
+
             return torch.argmax(masked_qs).view(1,1)
 
     def experience_replay(self):
@@ -178,13 +173,16 @@ class DQNAgent:
             state_batch = torch.stack(transitions.state)
         else:
             state_batch = torch.vstack(transitions.state)
+
         action_batch = torch.cat(transitions.action)
 
         if (self.conv_model):
             next_state_batch = torch.stack(transitions.next_state)
         else:
             next_state_batch = torch.vstack(transitions.next_state)
+
         reward_batch = torch.cat(transitions.reward)
+        
         # Convert to numbers to be used as a mask
         done_batch = torch.cat(transitions.done).long()
 
@@ -241,6 +239,9 @@ class DQNAgent:
                     # print(next_state)
                 ep_rewards.append(reward)
                 self.memory.store(state, action, next_state, torch.tensor([reward]), torch.tensor([done]))
+                # Since connect 4 is horizontally symetric we can "cheat" and add the reflection of the board aswell
+                reflected_next_state = torch.fliplr(next_state[0]).view(1, self.board_height, self.board_width)
+                self.memory.store(state, action, reflected_next_state, torch.tensor([reward]), torch.tensor([done]))
                 state = next_state
                 # optimize the model
             batch_loss = self.experience_replay()
@@ -249,7 +250,7 @@ class DQNAgent:
             eps_losses.append(ep_loss)
             if ep_num % self.target_update_rate == 0:
                 # Update the target net to use the trained policy net
-                print(f'Episode {ep_num + 1} Done, Avg. Reward = {sum(ep_rewards)/len(ep_rewards)}')
+                # print(f'Episode {ep_num + 1} Done, Avg. Reward = {sum(ep_rewards)/len(ep_rewards)}')
                 eps_rewards.append(sum(ep_rewards)/len(ep_rewards))
                 ep_rewards = []
                 self.target_net.load_state_dict(self.policy_net.state_dict())

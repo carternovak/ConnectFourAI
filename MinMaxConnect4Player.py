@@ -9,13 +9,13 @@ class MinMaxConnect4Player():
         self.max_time = max_time
         self.player = player
 
-    def get_move(self, board):
+    def get_move(self, board, player):
         # Picks the best move for the given board, return the column number for the move
-        return self.get_best_move_min_max(board)
+        return self.get_best_move_min_max(board, player)
 
-    def get_best_move_min_max(self, board):
+    def get_best_move_min_max(self, board, player):
         start_time = time.time()
-        return self.negamax(board, 0, self.player, start_time)[1]
+        return self.negamax(board, 0, player, start_time)[1]
 
     # Uses negamax, a variant of minmax (https://en.wikipedia.org/wiki/Negamax)
     def negamax(self, board, depth, player, start_time):

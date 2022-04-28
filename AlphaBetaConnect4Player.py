@@ -10,16 +10,16 @@ class AlphaBetaConnect4Player():
         self.max_time = max_time
         self.player = player
 
-    def get_move(self, board):
+    def get_move(self, board, player):
         # Picks the best move for the given board, return the column number for the move
-        best_move = self.get_best_move_alpha_beta(board)
+        best_move = self.get_best_move_alpha_beta(board, player)
         return best_move
 
-    def get_best_move_alpha_beta(self, board):
+    def get_best_move_alpha_beta(self, board, player):
         start_time = time.time()
         start_alpha = math.inf
         start_beta = -math.inf
-        return self.negamax_ab(board, 0, start_alpha, start_beta, self.player, start_time)[1]
+        return self.negamax_ab(board, 0, start_alpha, start_beta, player, start_time)[1]
 
     # Uses negamax, a variant of minmax (https://en.wikipedia.org/wiki/Negamax) along with alpha beta
     def negamax_ab(self, board, alpha, beta, depth, player, start_time):

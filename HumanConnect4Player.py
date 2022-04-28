@@ -7,7 +7,7 @@ class HumanConnect4Player(BaseConnect4Player):
         self.player = -1
         pass
 
-    def get_move(self, board):
+    def get_move(self, board, player):
         # Get user input and return it
         print('Board:')
         print(board.to_string())

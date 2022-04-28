@@ -54,7 +54,7 @@ class ConnectXTester():
                     print(test_board.to_string())
                 if (self.pause):
                     input("(P2 Moved) Press Enter to continue...")
-                player_one_move = self.player_one.get_move(test_board)
+                player_one_move = self.player_one.get_move(test_board, 1)
                 test_board = test_board.make_move(player_one_move, 1)
                 if (test_board.winner == None):
                     if (self.render == 'pygame'):
@@ -62,7 +62,7 @@ class ConnectXTester():
                         print(test_board.to_string())
                     if (self.pause):
                         input("(P1 Moved) Press Enter to continue...")
-                    player_two_move = self.player_two.get_move(test_board)
+                    player_two_move = self.player_two.get_move(test_board, -1)
                     test_board = test_board.make_move(player_two_move, -1)
             else:
                 if (self.render == 'pygame'):
@@ -70,7 +70,7 @@ class ConnectXTester():
                     print(test_board.to_string())
                 if (self.pause):
                     input("(P1 Moved) Press Enter to continue...")
-                player_two_move = self.player_two.get_move(test_board)
+                player_two_move = self.player_two.get_move(test_board, -1)
                 test_board = test_board.make_move(player_two_move, -1)
                 if (test_board.winner == None):
                     if (self.render == 'pygame'):
@@ -78,7 +78,7 @@ class ConnectXTester():
                         print(test_board.to_string())
                     if (self.pause):
                         input("(P2 Moved) Press Enter to continue...")
-                    player_one_move = self.player_one.get_move(test_board)
+                    player_one_move = self.player_one.get_move(test_board, 1)
                     test_board = test_board.make_move(player_one_move, 1)
         if (print_results): print(test_board.to_string())
         return test_board.winner

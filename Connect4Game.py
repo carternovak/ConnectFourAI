@@ -1,7 +1,7 @@
 from GUIBoard import GUIBoard
 from ConnectXBoard import ConnectXBoard
 from AlphaBetaConnect4Player import AlphaBetaConnect4Player
-from ConnectXHeuristics import partial_lines_heuristic, dist_heuristic
+from ConnectXHeuristics import partial_lines_heuristic, dist_heuristic, table_heuristic
 from DQNConnect4Player import DQNConnect4Player
 from ConnectXDQNTrainer import DQNAgent
 import torch
@@ -45,7 +45,7 @@ class Connect4Game:
                             if (self.gui.cursor_loc in self.gui.board.get_available_moves()):
                                 self.gui.board = self.gui.board.make_move(self.gui.cursor_loc, -1)
                                 if (self.gui.board.winner == None):
-                                    p2_move = self.player_two.get_move(self.gui.board)
+                                    p2_move = self.player_two.get_move(self.gui.board, 1)
                                     self.gui.board = self.gui.board.make_move(p2_move, 1)
                         # print(gui.to_array())
             else:
@@ -56,7 +56,7 @@ class Connect4Game:
 if __name__ == '__main__':
     test_board = ConnectXBoard()
     good_conv = DQNAgent(None, 
-                        conv_model=False, 
+                        conv_model=True, 
                         board_width=test_board.width, 
                         board_height=test_board.height, 
                         action_states=test_board.width, 
@@ -70,4 +70,4 @@ if __name__ == '__main__':
                         pre_trained_target=torch.load('test-self-play-target.pt'))
     while True:
         print('New Game')
-        game = Connect4Game(test_board, DQNConnect4Player(good_conv), move_delay=0.5)
+        game = Connect4Game(test_board, AlphaBetaConnect4Player(table_heuristic, -1, 100), move_delay=0.5)

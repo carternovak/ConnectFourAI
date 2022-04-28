@@ -33,29 +33,28 @@ class ConnectXGym(gym.Env):
         else:
             # Make the move
             self.board = self.board.make_move(action, self.player_num)
+
+            # Only make the opponent move if you haven't already won
+            if (self.board.winner == None):
+                other_player_move = self.other_player.get_move(self.board, self.other_player_num)
+                self.board = self.board.make_move(other_player_move, self.other_player_num)
+
+        if (self.board.winner == None):
+            reward = 0
+            info = {"Reason":"Nothing special"}
+        else:
             if (self.board.winner == self.player_num):
                 # If you won very good
                 reward = 1
                 info = {"Reason":"Won"}
-
-            # Only make the opponent move if you haven't already won
-            if (self.board.winner == None):
-                other_player_move = self.other_player.get_move(self.board)
-                self.board = self.board.make_move(other_player_move, self.other_player_num)
-
-            if (self.board.winner != None):
-                if (self.board.winner == self.player_num):
-                    # If you won very good
-                    reward = 1
-                    info = {"Reason":"Won"}
-                if (self.board.winner == 0):
-                    # If you forced tie, ok
-                    reward = 0
-                    info = {"Reason":"Move resulted in tie"}
-                if (self.board.winner == self.other_player_num):
-                    # If you allowed your opponent to win, bad
-                    reward = -1
-                    info = {"Reason":"Move resulted in other player winning"}
+            if (self.board.winner == 0):
+                # If you forced tie, ok
+                reward = 0
+                info = {"Reason":"Move resulted in tie"}
+            if (self.board.winner == self.other_player_num):
+                # If you allowed your opponent to win, bad
+                reward = -1
+                info = {"Reason":"Move resulted in other player winning"}
         
         state = self.board.to_tensor()
         done = self.board.winner != None
@@ -75,6 +74,6 @@ class ConnectXGym(gym.Env):
             if (player_going_first == 2):
                 # print(self.other_player)
                 # print(self.board)
-                other_player_move = self.other_player.get_move(self.board)
+                other_player_move = self.other_player.get_move(self.board, self.other_player_num)
                 self.board = self.board.make_move(other_player_move, self.other_player_num)
             return self.board.to_tensor()

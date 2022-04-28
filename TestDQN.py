@@ -21,16 +21,16 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    height = 7
-    width = 6
+    height = 6
+    width = 7
     x = 4
     state_size = height * width
     action_size = width
     board = ConnectXBoard(height=height, width=width, x=x)
 
-    env = ConnectXGym(board, RandomConnect4Player(), 1, -1)
+    env = ConnectXGym(board, AlphaBetaConnect4Player(table_heuristic, -1 ,5), 1, -1)
     agent = DQNAgent(env, conv_model=True, board_width=width, board_height=height, action_states=action_size, batch_size=100, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.5, lr=0.0001)
-    # training_results = agent.train(50000)
+    # training_results = agent.train(5000)
     # plt.plot(training_results)
     # plt.ylabel('Average Reward')
     # plt.xlabel('Epoch')
@@ -98,17 +98,19 @@ if __name__ == '__main__':
     #             return False
     #     return True
 
-    # self_play_agent = self_play(ConnectXBoard(), 5, episodes_per_generation=1000, learning_episodes=1000)
-    # self_player = DQNConnect4Player(self_play_agent)
-    true_self_play_agent = self_play(ConnectXBoard(), 5, episodes_per_generation=300, learning_episodes=300)
-    true_self_player = DQNConnect4Player(true_self_play_agent)
+    self_play_agent = self_play(ConnectXBoard(), 5, episodes_per_generation=2000, learning_episodes=1000)
+    self_player = DQNConnect4Player(self_play_agent)
+    # true_self_play_agent = self_play(ConnectXBoard(), 25, episodes_per_generation=3000, learning_episodes=3000)
+    # true_self_player = DQNConnect4Player(true_self_play_agent)
     sse_player = AlphaBetaConnect4Player(dist_heuristic, 1, 75)
     lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 25)
     dqn_player = DQNConnect4Player(agent)
     random_player = RandomConnect4Player()
     human_player = HumanConnect4Player()
-    torch.save(true_self_play_agent.policy_net.state_dict(), Path('test-self-play-policy.pt'))
-    torch.save(true_self_play_agent.target_net.state_dict(), Path('test-self-play-target.pt'))
+    torch.save(self_play_agent.policy_net.state_dict(), Path('test-self-play-policy.pt'))
+    torch.save(self_play_agent.target_net.state_dict(), Path('test-self-play-target.pt'))
+    # torch.save(true_self_play_agent.policy_net.state_dict(), Path('test-true-self-play-policy.pt'))
+    # torch.save(true_self_play_agent.target_net.state_dict(), Path('test-true-self-play-target.pt'))
     # tester = ConnectXTester(DQNConnect4Player(rand_player_one), 'Rand 1', HumanConnect4Player(), 'Human', 5, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
     # tester.test()
     # tester = ConnectXTester(DQNConnect4Player(rand_player_two), 'Rand 2', HumanConnect4Player(), 'Human', 5, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
@@ -116,5 +118,8 @@ if __name__ == '__main__':
 
     # print(compare(rand_player_one.policy_net, rand_player_two.policy_net))
 
-    tester = ConnectXTester(lines_player, 'Lines', dqn_player, 'DQN', 20, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
+    tester = ConnectXTester(AlphaBetaConnect4Player(table_heuristic, 1, 125), 'Table', self_player, 'Self Play', 20, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
     tester.test()
+
+    # tester = ConnectXTester(AlphaBetaConnect4Player(table_heuristic, 1, 125), 'Table', true_self_player, 'True Self Play', 20, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
+    # tester.test()
