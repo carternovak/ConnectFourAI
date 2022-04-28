@@ -42,7 +42,6 @@ class Connect4Game:
 
                         if event.key == pygame.K_SPACE:
                             # TODO: space key. make move if valid
-                            print(self.gui.cursor_loc)
                             if (self.gui.cursor_loc in self.gui.board.get_available_moves()):
                                 self.gui.board = self.gui.board.make_move(self.gui.cursor_loc, -1)
                                 if (self.gui.board.winner == None):

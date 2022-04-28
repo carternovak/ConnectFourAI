@@ -98,7 +98,7 @@ if __name__ == '__main__':
     #             return False
     #     return True
 
-    self_play_agent = self_play(ConnectXBoard(), 5, episodes_per_generation=2000, learning_episodes=1000)
+    self_play_agent = self_play(ConnectXBoard(), 15, episodes_per_generation=2000, learning_episodes=1000)
     self_player = DQNConnect4Player(self_play_agent)
     # true_self_play_agent = self_play(ConnectXBoard(), 25, episodes_per_generation=3000, learning_episodes=3000)
     # true_self_player = DQNConnect4Player(true_self_play_agent)

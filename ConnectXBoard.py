@@ -81,23 +81,25 @@ class ConnectXBoard:
        return self.first_empty_in_col[col] < self.height
        #return self.available(0, col)
 
-    def is_win(self, spaces):
-        # Check if all of the spaces have the same value
-        last_space = None
-        for space in spaces:
-            row, col = space
-            if not self.is_on_board(row, col):
-                return None
-            space_value = self.get_space(row, col)
-            # If any of the spaces are empty then no one could win
-            if (space_value == 0): return None
-            if (last_space != None and last_space != space_value):
-                return None
-            else:
-                last_space = space_value
-        return last_space
+    # def is_win(self, spaces):
+    #     # Check if all of the spaces have the same value
+    #     last_space = None
+    #     for space in spaces:
+    #         row, col = space
+    #         if not self.is_on_board(row, col):
+    #             return None
+    #         space_value = self.get_space(row, col)
+    #         # If any of the spaces are empty then no one could win
+    #         if (space_value == 0): return None
+    #         if (last_space != None and last_space != space_value):
+    #             return None
+    #         else:
+    #             last_space = space_value
+    #     return last_space
 
     def check_for_win(self, row, col):
+        # If the board is full, tie
+        if (len(self.get_available_moves()) <= 0): return 0
         starts_and_offsets = [
                                 ((row, 0), (0,1)), 
                                 ((0, col), (1,0))
@@ -113,7 +115,7 @@ class ConnectXBoard:
         # print(row + col)
         for (start, offset) in starts_and_offsets:
             winner = self.check_row(start, offset)
-            if (winner != 0):
+            if (winner != None):
                 return winner
         return None
     
@@ -137,7 +139,7 @@ class ConnectXBoard:
             # Move to the next space
             curr_row += row_offset
             curr_col += col_offset
-        return 0
+        return None
 
     # def check_for_win(self, row, col):
     #     if len(self.get_available_moves()) <= 0: return 0

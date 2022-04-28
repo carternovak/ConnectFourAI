@@ -13,6 +13,8 @@ class AlphaBetaConnect4Player():
     def get_move(self, board, player):
         # Picks the best move for the given board, return the column number for the move
         best_move = self.get_best_move_alpha_beta(board, player)
+        print(board.get_available_moves())
+        print(best_move)
         return best_move
 
     def get_best_move_alpha_beta(self, board, player):
