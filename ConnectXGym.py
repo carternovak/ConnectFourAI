@@ -53,7 +53,7 @@ class ConnectXGym(gym.Env):
                 info = {"Reason":"Move resulted in tie"}
             if (self.board.winner == self.other_player_num):
                 # If you allowed your opponent to win, bad
-                reward = -1
+                reward = -2
                 info = {"Reason":"Move resulted in other player winning"}
         
         state = self.board.to_tensor()

@@ -62,28 +62,37 @@ class ConvDQN(nn.Module):
         self.conv1 = nn.Conv2d(1, 16, kernel_size, stride)
         self.bn16 = nn.BatchNorm2d(16)
         self.conv2 = nn.Conv2d(16, 32, kernel_size, stride)
+        self.conv3 = nn.Conv2d(32, 32, kernel_size, stride)
         self.bn32 = nn.BatchNorm2d(32)
 
         # SOURCE: https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
-        def conv2d_size_out(size, kernel_size = 2, stride = 1):
+        def conv2d_size_out(size, kernel_size = kernel_size, stride = stride):
             return (size - (kernel_size - 1) - 1) // stride  + 1
         
-        convw = conv2d_size_out(conv2d_size_out(width))#conv2d_size_out(conv2d_size_out(conv2d_size_out(width)))
-        convh = conv2d_size_out(conv2d_size_out(height))#conv2d_size_out(conv2d_size_out(conv2d_size_out(height)))
+        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(conv2d_size_out(width))))
+        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(conv2d_size_out(height))))
 
         linear_input_size = convw * convh * 32
         # END
-        self.l1 = nn.Linear(linear_input_size, 20)
-        self.l2 = nn.Linear(20, action_states)
+        self.l1 = nn.Linear(linear_input_size, 80)
+        self.l2 = nn.Linear(80, 80)
+        self.l3 = nn.Linear(80, 40)
+        self.l4 = nn.Linear(40, 20)
+        self.final = nn.Linear(20, action_states)
         self.relu = nn.ReLU()
 
     def forward(self, x):
         x = self.relu(self.bn16(self.conv1(x)))
         x = self.relu(self.bn32(self.conv2(x)))
+        x = self.relu(self.bn32(self.conv3(x)))
+        x = self.relu(self.bn32(self.conv3(x)))
         x = x.view(x.size(0), -1)
         x = self.relu(self.l1(x))
+        x = self.relu(self.l2(x))
+        x = self.relu(self.l3(x))
+        x = self.relu(self.l4(x))
         # Don't use ReLu fo the last one
-        x = self.l2(x)
+        x = self.final(x)
         return x
 
 # Pseudo Code
@@ -243,7 +252,7 @@ class DQNAgent:
                 reflected_next_state = torch.fliplr(next_state[0]).view(1, self.board_height, self.board_width)
                 self.memory.store(state, action, reflected_next_state, torch.tensor([reward]), torch.tensor([done]))
                 state = next_state
-                # optimize the model
+            # optimize the model
             batch_loss = self.experience_replay()
             ep_loss += batch_loss
 
