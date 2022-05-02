@@ -89,7 +89,6 @@ def get_partial_lines(board, player):
         line_list = line_list + cardinal_lines + diagonal_lines
 
     for line in set(line_list):
-        #print(line)
         line_length = get_line_length(board, line)
         if line_length in partial_lines:
             partial_lines[line_length] += 1
@@ -109,18 +108,8 @@ def partial_lines_heuristic(board):
     player_two_partial_lines = get_partial_lines(board, -1).values()
     heuristic_value = 0
     for p1_lines, p2_lines, line_weight in zip(player_one_partial_lines, player_two_partial_lines, partial_line_weights):
-        # print("p1_lines")
-        # print(p1_lines)
-        # print("p2_lines")
-        # print(p2_lines)
-        # print("line_weight")
-        # print(line_weight)
         heuristic_value += (p1_lines - p2_lines) * line_weight
 
-    # print(player_one_partial_lines)
-    # print(player_two_partial_lines)
-    # print(partial_line_weights)
-    # print(heuristic_value)
     return heuristic_value
 
 def table_heuristic(board):
@@ -135,8 +124,7 @@ def table_heuristic(board):
     val_array = np.array(val_table)
     weighted_array = np.array(board.to_array()) * val_array
     summed_arr = sum(sum(weighted_array))
-    # print(weighted_array)
-    # print(summed_arr)
+
     return summed_arr
 
 

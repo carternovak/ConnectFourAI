@@ -79,23 +79,6 @@ class ConnectXBoard:
 
     def col_available(self, col):
        return self.first_empty_in_col[col] < self.height
-       #return self.available(0, col)
-
-    # def is_win(self, spaces):
-    #     # Check if all of the spaces have the same value
-    #     last_space = None
-    #     for space in spaces:
-    #         row, col = space
-    #         if not self.is_on_board(row, col):
-    #             return None
-    #         space_value = self.get_space(row, col)
-    #         # If any of the spaces are empty then no one could win
-    #         if (space_value == 0): return None
-    #         if (last_space != None and last_space != space_value):
-    #             return None
-    #         else:
-    #             last_space = space_value
-    #     return last_space
 
     def check_for_win(self, row, col):
         # If the board is full, tie
@@ -111,8 +94,7 @@ class ConnectXBoard:
         else:
             starts_and_offsets.append(((0, (col - row)), (1,1)))
             starts_and_offsets.append(((0, (col - row)), (-1,1)))
-        # print(col - row)
-        # print(row + col)
+
         for (start, offset) in starts_and_offsets:
             winner = self.check_row(start, offset)
             if (winner != None):
@@ -141,60 +123,12 @@ class ConnectXBoard:
             curr_col += col_offset
         return None
 
-    # def check_for_win(self, row, col):
-    #     if len(self.get_available_moves()) <= 0: return 0
-    #     # Get the row and col of the move
-    #     # Check up and down
-    #     up = [(row + x, col) for x in range(self.x)]
-    #     up_win = self.is_win(up)
-    #     if up_win != None:
-    #         # print('Winning Spots:')
-    #         # print(up)
-    #         return up_win
-    #     down = [(row - x, col) for x in range(self.x)]
-    #     down_win = self.is_win(down)
-    #     if down_win != None:
-    #         # print('Winning Spots:')
-    #         # print(down)
-    #         return down_win
-    #     # Check left and right
-    #     right = [(row, col + x) for x in range(self.x)]
-    #     right_win = self.is_win(right)
-    #     if right_win != None:
-    #         # print('Winning Spots:')
-    #         # print(right)
-    #         return right_win
-    #     left = [(row, col - x) for x in range(self.x)]
-    #     left_win = self.is_win(left)
-    #     if left_win != None:
-    #         # print('Winning Spots:')
-    #         # print(left)
-    #         return left_win
-    #     # Check diagonals
-    #     diagonals = [
-    #         [(row - x, col - x) for x in range(self.x)],
-    #         [(row - x, col + x) for x in range(self.x)],
-    #         [(row + x, col + x) for x in range(self.x)],
-    #         [(row + x, col - x) for x in range(self.x)]
-    #     ]
-    #     for diagonal in diagonals:
-    #         diagonal_win = self.is_win(diagonal)
-    #         if diagonal_win != None:
-    #             # print('Winning Spots:')
-    #             # print(diagonals)
-    #             return diagonal_win
-    #     # If someone hasn't won after all these checks then no one has won
-    #     return None
-
-        # Gets the columns that can have a piece placed in them
+    # Gets the columns that can have a piece placed in them
     def get_available_moves(self):
         return [col for col in range(self.width) if self.col_available(col)]
 
     def get_empty_index_in_col(self, col):
         return self.first_empty_in_col[col]
-        #for index, val in enumerate(self.get_row(row)):
-        #    if (val != 0):
-        #        return index - 1
 
     # Places a piece in the given row, doesn't mutate the board but instead returns a new board
     def make_move(self, col, player):
