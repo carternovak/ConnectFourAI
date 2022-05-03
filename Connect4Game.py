@@ -66,8 +66,8 @@ if __name__ == '__main__':
                         min_epsilon=0.05, 
                         gamma=.5, 
                         lr=0.0001,
-                        pre_trained_policy=torch.load('test-true-self-play-policy.pt'),
-                        pre_trained_target=torch.load('test-true-self-play-target.pt'))
+                        pre_trained_policy=torch.load('self-10-gens-policy.pt'),
+                        pre_trained_target=torch.load('self-10-gens-target.pt'))
     while True:
         print('New Game')
         game = Connect4Game(test_board, DQNConnect4Player(good_conv), move_delay=0.5)

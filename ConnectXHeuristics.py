@@ -2,40 +2,42 @@ import random
 import numpy as np
 #from collections import Set
 
-def respective_powered(self, board):
+def respective_powered(board):
     finalEval = 0
     finalEval += (fourinarow(board)*4)**4
     finalEval += (threeinarow(board)*3)**3
     finalEval += (twoinarow(board)*2)**2
     return finalEval
 
-def fourinarow(board):
+def fourinarow(board_obj):
     p1_four = 0
     p2_four = 0
+
+    board = board_obj.to_array()
     #horizontal
-    for i in board.height:
-        for j in board.width - 3:
+    for i in range(board_obj.height):
+        for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i][j+1] == 1 and board[i][j+2] == 1 and board[i][j+3] == 1:
                 p1_four += 1
             elif board[i][j] == -1 and board[i][j+1] == -1 and board[i][j+2] == -1 and board[i][j+3] == -1:
                 p2_four -= 1
     #vertical
-    for i in board.height - 3:
-        for j in board.width:
+    for i in range(board_obj.height - 3):
+        for j in range(board_obj.width):
             if board[i][j] == 1 and board[i+1][j] == 1 and board[i+2][j] == 1 and board[i+3][j] == 1:
                 p1_four += 1
             elif board[i][j] == -1 and board[i+1][j] == -1 and board[i+2][j] == -1 and board[i+3][j] == -1:
                 p2_four -= 1
     #negative diagonal
-    for i in board.height:
-        for j in board.width - 3:
+    for i in range(board_obj.height):
+        for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i-1][j+1] == 1 and board[i-2][j+2] == 1 and board[i-3][j+3] == 1:
                 p1_four += 1
             elif board[i][j] == -1 and board[i-1][j+1] == -1 and board[i-2][j+2] == -1 and board[i-3][j+3] == -1:
                 p2_four -= 1
     #positive diagonal
-    for i in board.height - 3:
-        for j in board.width - 3:
+    for i in range(board_obj.height - 3):
+        for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i+1][j+1] == 1 and board[i+2][j+2] == 1 and board[i+3][j+3] == 1:
                 p1_four += 1
             elif board[i][j] == -1 and board[i+1][j+1] == -1 and board[i+2][j+2] == -1 and board[i+3][j+3] == -1:
@@ -43,12 +45,14 @@ def fourinarow(board):
 
     return max(p1_four, abs(p2_four))
 
-def threeinarow(board):
+def threeinarow(board_obj):
     p1_three = 0
     p2_three = 0
+
+    board = board_obj.to_array()
     #horizontal
-    for i in board.height:
-        for j in board.width - 3:
+    for i in range(board_obj.height):
+        for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i][j+1] == 1 and board[i][j+2] == 1 and board[i][j+3] == 0:
                 p1_three += 1
             elif board[i][j] == -1 and board[i][j+1] == -1 and board[i][j+2] == -1 and board[i][j+3] == 0:
@@ -66,8 +70,8 @@ def threeinarow(board):
             elif board[i][j] == 0 and board[i][j+1] == -1 and board[i][j+2] == -1 and board[i][j+3] == -1:
                 p2_three += 1
     #vertical
-    for i in board.height - 3:
-        for j in board.width:
+    for i in range(board_obj.height - 3):
+        for j in range(board_obj.width):
             if board[i][j] == 1 and board[i+1][j] == 1 and board[i+2][j] == 1 and board[i+3][j] == 0:
                 p1_three += 1
             elif board[i][j] == -1 and board[i+1][j] == -1 and board[i+2][j] == -1 and board[i+3][j] == 0:
@@ -85,8 +89,8 @@ def threeinarow(board):
             elif board[i][j] == 0 and board[i+1][j] == -1 and board[i+2][j] == -1 and board[i+3][j] == -1:
                 p2_three += 1
     # negative diagonal
-    for i in board.height:
-        for j in board.width-3:
+    for i in range(board_obj.height):
+        for j in range(board_obj.width-3):
             if board[i][j] == 1 and board[i-1][j + 1] == 1 and board[i-2][j + 2] == 1 and board[i-3][j + 3] == 0:
                 p1_three += 1
             elif board[i][j] == -1 and board[i-1][j + 1] == -1 and board[i-2][j + 2] == -1 and board[i-3][j + 3] == 0:
@@ -104,8 +108,8 @@ def threeinarow(board):
             elif board[i][j] == 0 and board[i-1][j + 1] == -1 and board[i-2][j + 2] == -1 and board[i-3][j + 3] == -1:
                 p2_three += 1
     # positive diagonal
-    for i in board.height - 3:
-        for j in board.width - 3:
+    for i in range(board_obj.height - 3):
+        for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i + 1][j + 1] == 1 and board[i + 2][j + 2] == 1 and board[i + 3][j + 3] == 0:
                 p1_three += 1
             elif board[i][j] == -1 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == -1 and board[i + 3][j + 3] == 0:
@@ -122,13 +126,17 @@ def threeinarow(board):
                 p1_three += 1
             elif board[i][j] == 0 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == -1 and board[i + 3][j + 3] == -1:
                 p2_three += 1
+    
+    return max(p1_three, abs(p2_three))
 
-def twoinarow(board):
+def twoinarow(board_obj):
     p1_two = 0
     p2_two = 0
+
+    board = board_obj.to_array()
     #horizontal
-    for i in board.height:
-        for j in board.width - 3:
+    for i in range(board_obj.height):
+        for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i][j+1] == 1 and board[i][j+2] == 0 and board[i][j+3] == 0:
                 p1_two += 1
             elif board[i][j] == -1 and board[i][j+1] == -1 and board[i][j+2] == 0 and board[i][j+3] == 0:
@@ -150,8 +158,8 @@ def twoinarow(board):
             elif board[i][j] == 0 and board[i][j+1] == 0 and board[i][j+2] == -1 and board[i][j+3] == -1:
                 p2_two -= 1
     #vertical
-    for i in board.height - 3:
-        for j in board.width:
+    for i in range(board_obj.height - 3):
+        for j in range(board_obj.width):
             if board[i][j] == 1 and board[i+1][j] == 1 and board[i+2][j] == 0 and board[i+3][j] == 0:
                 p1_two += 1
             elif board[i][j] == -1 and board[i+1][j] == -1 and board[i+2][j] == 0 and board[i+3][j] == 0:
@@ -173,8 +181,8 @@ def twoinarow(board):
             elif board[i][j] == 0 and board[i+1][j] == 0 and board[i+2][j] == -1 and board[i+3][j] == -1:
                 p2_two -= 1
     #negative diagonal
-    for i in board.height:
-        for j in board.width - 3:
+    for i in range(board_obj.height):
+        for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i - 1][j + 1] == 1 and board[i - 2][j + 2] == 0 and board[i - 3][j + 3] == 0:
                 p1_two += 1
             elif board[i][j] == -1 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == 0 and board[i - 3][j + 3] == 0:
@@ -196,8 +204,8 @@ def twoinarow(board):
             elif board[i][j] == 0 and board[i - 1][j + 1] == 0 and board[i - 2][j + 2] == -1 and board[i - 3][j + 3] == -1:
                 p2_two -= 1
     #positive diagonal
-    for i in board.height - 3:
-        for j in board.width - 3:
+    for i in range(board_obj.height - 3):
+        for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i+1][j+1] == 1 and board[i+2][j+2] == 0 and board[i+3][j+3] == 0:
                 p1_two += 1
             elif board[i][j] == -1 and board[i+1][j+1] == -1 and board[i+2][j+2] == 0 and board[i+3][j+3] == 0:
@@ -218,6 +226,8 @@ def twoinarow(board):
                 p1_two += 1
             elif board[i][j] == 0 and board[i+1][j+1] == 0 and board[i+2][j+2] == -1 and board[i+3][j+3] == -1:
                 p2_two -= 1
+
+    return max(p1_two, abs(p2_two))
 
 
 def manhattan_distance(point1, point2):

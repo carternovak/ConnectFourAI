@@ -5,7 +5,7 @@ from ConnectXBoard import ConnectXBoard
 from RandomConnect4Player import RandomConnect4Player
 from DQNConnect4Player import DQNConnect4Player
 from AlphaBetaConnect4Player import AlphaBetaConnect4Player
-from ConnectXHeuristics import table_heuristic
+from ConnectXHeuristics import table_heuristic, respective_powered
 from ConnectXTester import ConnectXTester
 
 def self_play(board, generations, episodes_per_generation = 5000, learning_episodes = 500):
@@ -70,9 +70,9 @@ def self_play(board, generations, episodes_per_generation = 5000, learning_episo
 
 def true_self_play(board, generations, episodes_per_generation = 5000, learning_episodes = 500):
     
-        rand_player = RandomConnect4Player()
-        table_player = AlphaBetaConnect4Player(table_heuristic, -1, 25)
-        env = ConnectXGym(ConnectXBoard(), table_player, 1, -1)
+        #rand_player = RandomConnect4Player()
+        training_player = AlphaBetaConnect4Player(respective_powered, 1, 25)
+        env = ConnectXGym(ConnectXBoard(), training_player, 1, -1)
         starting_model = DQNAgent(env, board.width, board.height, board.width, conv_model = True, batch_size=128, lr = 0.001, gamma = 0.5, epsilon=0.9, epsilon_decay = 0.001, min_epsilon = 0.05)
         starting_model.train(learning_episodes)
         competitor_model = DQNAgent(env, board.width, board.height, board.width, conv_model = True, batch_size=128, lr = 0.001, gamma = 0.5, epsilon=0.9, epsilon_decay = 0.001, min_epsilon = 0.05)

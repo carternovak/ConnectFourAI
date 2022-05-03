@@ -29,7 +29,8 @@ class ConnectXGym(gym.Env):
 
         if (not self.board.col_available(action)):
             # If an invalid move was made, very bad
-            raise RuntimeError("Illegal Move Made")
+            print("Illegal Move Made")
+            # raise RuntimeError("Illegal Move Made")
         else:
             # Make the move
             self.board = self.board.make_move(action, self.player_num)
@@ -53,7 +54,7 @@ class ConnectXGym(gym.Env):
                 info = {"Reason":"Move resulted in tie"}
             if (self.board.winner == self.other_player_num):
                 # If you allowed your opponent to win, bad
-                reward = -2
+                reward = -1
                 info = {"Reason":"Move resulted in other player winning"}
         
         state = self.board.to_tensor()
@@ -72,8 +73,7 @@ class ConnectXGym(gym.Env):
             player_going_first = random.randint(1,2)
             # If the other player is going first then make a move for them
             if (player_going_first == 2):
-                # print(self.other_player)
-                # print(self.board)
                 other_player_move = self.other_player.get_move(self.board, self.other_player_num)
                 self.board = self.board.make_move(other_player_move, self.other_player_num)
+                
             return self.board.to_tensor()

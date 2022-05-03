@@ -1,4 +1,5 @@
 from typing import List
+from sympy import Q
 import torch
 import random
 from torch import nn, rand
@@ -7,6 +8,7 @@ from collections import namedtuple
 from ConnectXBoard import *
 from ConnectXGym import *
 from RandomConnect4Player import *
+import time
 
 ExperienceTuple = namedtuple('ExperienceTuple', ['state', 'action', 'next_state', 'reward', 'done'])
 
@@ -28,10 +30,10 @@ class DQN(nn.Module):
     def __init__(self, input_size, action_states, dropout = None) -> None:
         super(DQN, self).__init__()
         self.l1 = nn.Linear(input_size, 50)
-        self.l2 = nn.Linear(50, 50)
-        self.l3 = nn.Linear(50, 50)
-        self.l4 = nn.Linear(50, 50)
-        self.l5 = nn.Linear(50, 50)
+        self.l2 = nn.Linear(50, 100)
+        self.l3 = nn.Linear(100, 150)
+        self.l4 = nn.Linear(150, 100)
+        self.l5 = nn.Linear(100, 50)
         self.l6 = nn.Linear(50, action_states)
         self.relu = nn.ReLU()
         if dropout:
@@ -62,35 +64,35 @@ class ConvDQN(nn.Module):
         self.conv1 = nn.Conv2d(1, 16, kernel_size, stride)
         self.bn16 = nn.BatchNorm2d(16)
         self.conv2 = nn.Conv2d(16, 32, kernel_size, stride)
-        self.conv3 = nn.Conv2d(32, 32, kernel_size, stride)
+        # self.conv3 = nn.Conv2d(32, 32, kernel_size, stride)
         self.bn32 = nn.BatchNorm2d(32)
 
         # SOURCE: https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
         def conv2d_size_out(size, kernel_size = kernel_size, stride = stride):
             return (size - (kernel_size - 1) - 1) // stride  + 1
         
-        convw = conv2d_size_out(conv2d_size_out(conv2d_size_out(conv2d_size_out(width))))
-        convh = conv2d_size_out(conv2d_size_out(conv2d_size_out(conv2d_size_out(height))))
+        convw = conv2d_size_out(conv2d_size_out(width))#conv2d_size_out(conv2d_size_out(conv2d_size_out(conv2d_size_out(width))))
+        convh = conv2d_size_out(conv2d_size_out(height))#conv2d_size_out(conv2d_size_out(conv2d_size_out(conv2d_size_out(height))))
 
         linear_input_size = convw * convh * 32
         # END
         self.l1 = nn.Linear(linear_input_size, 80)
-        self.l2 = nn.Linear(80, 80)
-        self.l3 = nn.Linear(80, 40)
-        self.l4 = nn.Linear(40, 20)
-        self.final = nn.Linear(20, action_states)
+        # self.l2 = nn.Linear(80, 80)
+        # self.l3 = nn.Linear(80, 40)
+        # self.l4 = nn.Linear(40, 20)
+        self.final = nn.Linear(80, action_states)
         self.relu = nn.ReLU()
 
     def forward(self, x):
         x = self.relu(self.bn16(self.conv1(x)))
         x = self.relu(self.bn32(self.conv2(x)))
-        x = self.relu(self.bn32(self.conv3(x)))
-        x = self.relu(self.bn32(self.conv3(x)))
+        # x = self.relu(self.bn32(self.conv3(x)))
+        # x = self.relu(self.bn32(self.conv3(x)))
         x = x.view(x.size(0), -1)
         x = self.relu(self.l1(x))
-        x = self.relu(self.l2(x))
-        x = self.relu(self.l3(x))
-        x = self.relu(self.l4(x))
+        # x = self.relu(self.l2(x))
+        # x = self.relu(self.l3(x))
+        # x = self.relu(self.l4(x))
         # Don't use ReLu fo the last one
         x = self.final(x)
         return x
@@ -98,8 +100,8 @@ class ConvDQN(nn.Module):
 # Pseudo Code
 # For episode in episodes
 class DQNAgent:
-    def __init__(self, env, board_width, board_height, action_states, batch_size, lr, gamma, epsilon, epsilon_decay = 0.01, min_epsilon=0.1, target_update_rate = 100, pre_trained_target = None, pre_trained_policy = None, conv_model = False) -> None:
-        self.memory = ReplayMemory(5000)
+    def __init__(self, env, board_width, board_height, action_states, batch_size, lr, gamma, epsilon, epsilon_decay = 0.01, min_epsilon=0.1, target_update_rate = 500, pre_trained_target = None, pre_trained_policy = None, conv_model = False) -> None:
+        self.memory = ReplayMemory(50000)
 
         self.env = env
         self.board_width = board_width
@@ -127,7 +129,8 @@ class DQNAgent:
         self.target_net.eval()
         self.batch_size = batch_size
         self.optimizer = torch.optim.Adam(self.policy_net.parameters(), lr=lr)
-        self.loss = nn.SmoothL1Loss()
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=100, gamma=0.9)
+        self.loss = nn.MSELoss()
         self.gamma = gamma
         self.epsilon = epsilon
         self.epsilon_decay = epsilon_decay
@@ -149,6 +152,7 @@ class DQNAgent:
 
         illegal_move_penalty = -9999999
         illegal_move_mask = top_row * illegal_move_penalty
+
         if (random.random() < exploration_rate):
             # Return a random state
             # Generate a random tensor
@@ -174,15 +178,20 @@ class DQNAgent:
             return 0
 
         batch_loss = []
+
+        # Get a batch of samples from the replay membor
         experience_batch = self.memory.sample(self.batch_size)
 
+        # Convert from a list of tuples to a tuple of lists
         transitions = ExperienceTuple(*zip(*experience_batch))
 
+        # Put the transitions into a batch that pytorch undestands
         if (self.conv_model):
             state_batch = torch.stack(transitions.state)
         else:
             state_batch = torch.vstack(transitions.state)
 
+        
         action_batch = torch.cat(transitions.action)
 
         if (self.conv_model):
@@ -199,9 +208,10 @@ class DQNAgent:
         # (if done then the future reward is 0 )
         targets = self.target_net(next_state_batch)
         # Get the max for each element of the batch
+
         max_targets = targets.max(dim = 1).values
 
-        predicted = reward_batch + torch.mul((self.gamma * max_targets), done_batch)
+        predicted = reward_batch + (self.gamma * max_targets)#torch.mul((self.gamma * max_targets), done_batch)
         # expected is based on the policy net
         expected = self.policy_net(state_batch).gather(1, action_batch).squeeze()
 
@@ -212,21 +222,25 @@ class DQNAgent:
         batch_loss.append(int(loss))
 
         self.optimizer.step()
+        self.scheduler.step()
 
-        for param in self.policy_net.parameters():
-            param.grad.data.clamp_(-1, 1)
+        # for param in self.policy_net.parameters():
+        #     param.grad.data.clamp_(-1, 1)
         
         self.epsilon = max(self.epsilon * (1 - self.epsilon_decay), self.min_epsilon)
 
-        # print(self.epsilon)
         return sum(batch_loss)/len(batch_loss)
 
 
     def train(self, episodes):
         eps_losses = []
+        avg_ep_rewards = []
         eps_rewards = []
-        ep_rewards = []
+        # ep_rewards = []
+
+        last_time = time.time()
         for ep_num in range(episodes):
+            
             done = False
             # Reset the training environment
             # Get the initial state from the environment
@@ -234,36 +248,49 @@ class DQNAgent:
             if (self.conv_model):
                 # Convert 1d input to 2d
                 state = state.view(1, self.board_height, self.board_width)
+
             # Run through the game until it ends
             ep_loss = 0
+            total_rewards = []
             while not done:
-                # self.env.render(mode="human")
+
                 action = self.predict(state)
                 next_state, reward, done, info = self.env.step(action)
-                # print(info)
+
+                total_rewards.append(reward)
+
                 if (self.conv_model):
                     # Convert 1d input to 2d
-                    # print(next_state)
                     next_state = next_state.view(1, self.board_height, self.board_width)
-                    # print(next_state)
-                ep_rewards.append(reward)
+
                 self.memory.store(state, action, next_state, torch.tensor([reward]), torch.tensor([done]))
                 # Since connect 4 is horizontally symetric we can "cheat" and add the reflection of the board aswell
-                reflected_next_state = torch.fliplr(next_state[0]).view(1, self.board_height, self.board_width)
-                self.memory.store(state, action, reflected_next_state, torch.tensor([reward]), torch.tensor([done]))
+                if (self.conv_model):
+                    reflected_next_state = torch.fliplr(next_state[0]).view(1, self.board_height, self.board_width)
+                    self.memory.store(state, action, reflected_next_state, torch.tensor([reward]), torch.tensor([done]))
                 state = next_state
+
             # optimize the model
             batch_loss = self.experience_replay()
-            ep_loss += batch_loss
+            # ep_loss += batch_loss
 
-            eps_losses.append(ep_loss)
+            # print(sum(total_rewards))
+            # np.mean(total_rewards)
+            eps_rewards.append(sum(total_rewards))
+
             if ep_num % self.target_update_rate == 0:
                 # Update the target net to use the trained policy net
-                # print(f'Episode {ep_num + 1} Done, Avg. Reward = {sum(ep_rewards)/len(ep_rewards)}')
-                eps_rewards.append(sum(ep_rewards)/len(ep_rewards))
-                ep_rewards = []
+                # eps_rewards.append(sum(ep_rewards)/len(ep_rewards))
+                # ep_rewards = []
+                avg_reward_over_ep = np.mean(eps_rewards)
+                avg_ep_rewards.append(avg_reward_over_ep)
+                eps_rewards = []
                 self.target_net.load_state_dict(self.policy_net.state_dict())
-        return eps_rewards
+        
+                curr_time = time.time()
+                print(f'Episode {ep_num} Complete, Runtime {round(curr_time - last_time, 2)}s, Avg Reward = {round(avg_reward_over_ep, 2)}, Epsilon = {round(self.epsilon, 2)}', end='\r')
+                last_time = curr_time
+        return avg_ep_rewards[1:]
 
 
 if __name__ == '__main__':
