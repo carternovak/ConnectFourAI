@@ -14,6 +14,7 @@ def save_model(model, model_name):
     model_data['width'] = model.board_width
     model_data['height'] = model.board_height
     model_data['conv'] = model.conv_model
+    model_data['training_time'] = model.total_training_time
 
     # Create new folder to store data about the model being saved
     Path(folder_path).mkdir(parents=True, exist_ok=True)

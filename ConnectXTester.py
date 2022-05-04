@@ -1,7 +1,16 @@
 # Tests two Connect X Players against each other and compares their performance
 
 
+from ConnectXHeuristics import respective_powered, table_heuristic
 from GUIBoard import GUIBoard
+from DQNConnect4Player import DQNConnect4Player
+from RandomConnect4Player import RandomConnect4Player
+from MinMaxConnect4Player import MinMaxConnect4Player
+from AlphaBetaConnect4Player import AlphaBetaConnect4Player
+from ModelLoading import load_model
+from ConnectXBoard import ConnectXBoard
+
+import pandas as pd
 
 
 class ConnectXTester():
@@ -82,4 +91,55 @@ class ConnectXTester():
                     test_board = test_board.make_move(player_one_move, 1)
         if (print_results): print(test_board.to_string())
         return test_board.winner
-        
+
+
+def test_multiple_models(dict_of_players, board, num_games = 500):
+    player_names = list(dict_of_players.keys())
+    win_rates = {player_name: {other_player_name:None for other_player_name in player_names} for player_name in player_names}
+
+    for player_name, player in dict_of_players.items():
+        for other_player_name, other_player in dict_of_players.items():
+            # Only test combinations that haven't been tested yet
+            if (win_rates[player_name][other_player_name] == None):
+                tester = ConnectXTester(player, player_name, other_player, other_player_name, num_games, board, pause = False, render = 'none')
+                results, player_one_wins, player_two_wins, ties = tester.test(False)
+
+                print(f'Test: {player_name} vs {other_player_name} Complete')
+
+                win_rates[player_name][other_player_name] = player_one_wins
+                if (player_name != other_player_name): 
+                    win_rates[other_player_name][player_name] = player_two_wins
+            else:
+                print('skip')
+
+    return win_rates
+
+if __name__ == '__main__':
+    models = {
+        'DQN Random': DQNConnect4Player(load_model('15000-eps-random')),
+        'DQN Table': DQNConnect4Player(load_model('15000-eps-table-25-depth')),
+        'DQN Respective Power (Deep) 10,000': DQNConnect4Player(load_model('10000-eps-respective_powered-125-depth')),
+        'DQN Respective Power 10,000': DQNConnect4Player(load_model('10000-eps-respective_powered-25-depth')),
+        'DQN Respective Power 5,000': DQNConnect4Player(load_model('5000-eps-respective_powered-25-depth')),
+        'DQN Respective Power 1,000': DQNConnect4Player(load_model('1000-eps-respective_powered-25-depth')),
+        'Alpha Beta Table (125)': AlphaBetaConnect4Player(table_heuristic, -1, 125),
+        'Alpha Beta Respective Power (125)': AlphaBetaConnect4Player(respective_powered, -1, 125),
+        'Alpha Beta Table (50)': AlphaBetaConnect4Player(table_heuristic, -1, 50),
+        'Alpha Beta Respective Power (50)': AlphaBetaConnect4Player(respective_powered, -1, 50),
+        'Alpha Beta Table (5)': AlphaBetaConnect4Player(table_heuristic, -1, 5),
+        'Alpha Beta Respective Power (5)': AlphaBetaConnect4Player(respective_powered, -1, 5),
+        'Random': RandomConnect4Player(),
+    }
+
+    height = 6
+    width = 7
+    x = 4
+    state_size = height * width
+    action_size = width
+    board = ConnectXBoard(height=height, width=width, x=x)
+
+    results = test_multiple_models(models, board)
+
+    results_df = pd.DataFrame(results)
+    results_df.to_csv('results.csv')
+    print(results_df)

@@ -128,7 +128,7 @@ class DQNAgent:
             
         self.target_net.eval()
         self.batch_size = batch_size
-        self.optimizer = torch.optim.Adam(self.policy_net.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.policy_net.parameters(), lr = lr)
         self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=100, gamma=0.9)
         self.loss = nn.MSELoss()
         self.gamma = gamma
@@ -136,6 +136,9 @@ class DQNAgent:
         self.epsilon_decay = epsilon_decay
         self.min_epsilon = min_epsilon
         self.target_update_rate = target_update_rate
+
+        # Records the total time spent training this model
+        self.total_training_time = 0
 
     def get_move_private(self, state):
         if (self.conv_model):
@@ -237,7 +240,8 @@ class DQNAgent:
         eps_rewards = []
         # ep_rewards = []
 
-        last_time = time.time()
+        start_time = time.time()
+        last_time = start_time
         for ep_num in range(episodes):
             
             done = False
@@ -289,6 +293,12 @@ class DQNAgent:
                 curr_time = time.time()
                 print(f'Episode {ep_num} Complete, Runtime {round(curr_time - last_time, 2)}s, Avg Reward = {round(avg_reward_over_ep, 2)}, Epsilon = {round(self.epsilon, 2)}', end='\r')
                 last_time = curr_time
+
+        # Record the training_time
+        end_time = time.time()
+        time_spent_training = end_time - start_time 
+        self.total_training_time += time_spent_training
+        print(f'Trained for {episodes} Episodes, Total Time Taken {time_spent_training}s')
         return avg_ep_rewards[1:]
 
 
