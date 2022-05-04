@@ -2,7 +2,6 @@ from ConnectXDQNTrainer import *
 from ConnectXGym import *
 from DuelingDQNs import *
 from SelfPlay import self_play, true_self_play
-from GreedyConnect4Player import GreedyConnect4Player
 
 from RandomConnect4Player import *
 from DQNConnect4Player import *
@@ -15,8 +14,7 @@ from ConnectXTester import *
 from ConnectXBoard import *
 from ConnectXHeuristics import *
 
-from pathlib import Path
-import matplotlib.pyplot as plt
+from ModelLoading import save_model
 
 if __name__ == '__main__':
     height = 6
@@ -27,99 +25,16 @@ if __name__ == '__main__':
     board = ConnectXBoard(height=height, width=width, x=x)
 
     env = ConnectXGym(board, AlphaBetaConnect4Player(respective_powered, 1, 25), 1, -1)
-    # agent = DQNAgent(env, conv_model = True, board_width = width, board_height = height, action_states = action_size, batch_size = 32, epsilon = .999, epsilon_decay = 0.001, min_epsilon = 0.01, gamma = .9, lr = 0.001)
-    # training_results = agent.train(10000)
-    # plt.plot(training_results)
-    # plt.ylabel('Avg Reward')
-    # plt.xlabel('Epoch')
-    # plt.show()
-    # # # plt.plot(training_results[200:])
-    # # # plt.ylabel('Average Reward')
-    # # # plt.xlabel('Episode')
-    # # # plt.show()
-    # # print('Agent Trained')
-    # # agent.policy_net.load_state_dict(torch.load(Path('rand-policy.pt')))
-    # # agent.target_net.load_state_dict(torch.load(Path('rand-target.pt')))
-    # torch.save(agent.policy_net.state_dict(), Path('long-table-policy.pt'))
-    # torch.save(agent.target_net.state_dict(), Path('long-table-target.pt'))
+    agent = DQNAgent(env, conv_model = True, board_width = width, board_height = height, action_states = action_size, batch_size = 32, epsilon = .999, epsilon_decay = 0.001, min_epsilon = 0.01, gamma = .9, lr = 0.001)
+    training_results = agent.train(10000)
 
-    # torch.save(dqn_1.policy_net.state_dict(), Path('15-500-conv-p1-policy.pt'))
-    # torch.save(dqn_1.target_net.state_dict(), Path('15-500-conv-p1-target.pt'))
-    # torch.save(dqn_2.policy_net.state_dict(), Path('15-500-conv-p2-policy.pt'))
-    # torch.save(dqn_2.target_net.state_dict(), Path('15-500-conv-p2-target.pt'))
+    save_model(save_model, '10000-eps-respective_powered')
 
-    # dqn_1_player = DQNConnect4Player(DQNAgent(
-    #     env, conv_model=True, board_height=height, board_width=width, action_states=action_size, batch_size=128, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.8, lr=0.0001,
-    #     pre_trained_policy=torch.load(Path('5-500-conv-p1-policy.pt')), pre_trained_target=torch.load(Path('5-500-conv-p1-target.pt'))
-    #     ))
-
-    # dqn_2_player = DQNConnect4Player(DQNAgent(
-    #     env, board_height=height, board_width=width, action_states=action_size, batch_size=128, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.8, lr=0.0001,
-    #     pre_trained_policy=torch.load(Path('100-600-p2-policy.pt')),pre_trained_target=torch.load(Path('100-600-p2-target.pt'))
-    #     ))
-
-    # dqn_one_agent = DQNAgent(env, conv_model=True, board_width=width, board_height=height, action_states=action_size, batch_size=100, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.5, lr=0.0001)
-    # dqn_two_agent = DQNAgent(env, conv_model=False, board_width=width, board_height=height, action_states=action_size, batch_size=100, epsilon=.999, epsilon_decay=0.01, min_epsilon=0.05, gamma=.5, lr=0.0001)
-    # test_thunderdome = ThunderDome({'DQN_CNN':dqn_one_agent, 'DQN_NOT_CNN':dqn_two_agent}, {'RAND': RandomConnect4Player(),'GREEDY': GreedyConnect4Player()})
-
-    # test_thunderdome.thunderdome(15, 500)
-
-    # thunderdome_players = test_thunderdome.get_trained_models()
-
-    # dqn_cnn_player = DQNConnect4Player(thunderdome_players['DQN_CNN'])
-    # dqn_norm_player = DQNConnect4Player(thunderdome_players['DQN_NOT_CNN'])
-
-    # board1 = ConnectXBoard()
-    # env1 = ConnectXGym(board1, RandomConnect4Player(), 1, -1)
-    # rand_player_one = DQNAgent(env1, width, height, action_size, conv_model = True, batch_size=128, lr=0.005, gamma=0.7, epsilon=0.5, epsilon_decay=0.001, min_epsilon=0.05)
-    # rand_player_one.train(200)
-
-    # board2 = ConnectXBoard()
-    # env2 = ConnectXGym(board2, RandomConnect4Player(), 1, -1)
-    # rand_player_two = DQNAgent(env2, width, height, action_size, conv_model = True, batch_size=128, lr=0.005, gamma=0.7, epsilon=0.5, epsilon_decay=0.001, min_epsilon=0.05)
-    # rand_player_two.train(200)
-
-    # def compare(model1, model2):
-    #     for p1, p2 in zip(model1.parameters(), model2.parameters()):
-    #         if p1.data.ne(p2.data).sum() > 0:
-    #             return False
-    #     return True
-
-    # self_play_agent = self_play(ConnectXBoard(), 15, episodes_per_generation=2000, learning_episodes=1000)
-    # self_player = DQNConnect4Player(self_play_agent)
-    true_self_play_agent = true_self_play(ConnectXBoard(), 50, episodes_per_generation=10000, learning_episodes=10000)
-    true_self_player = DQNConnect4Player(true_self_play_agent)
     sse_player = AlphaBetaConnect4Player(dist_heuristic, 1, 75)
     lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 25)
-    # dqn_player = DQNConnect4Player(agent)
+    dqn_player = DQNConnect4Player(agent)
     random_player = RandomConnect4Player()
     human_player = HumanConnect4Player()
-    torch.save(true_self_play_agent.policy_net.state_dict(), Path('self-50-gens-policy.pt'))
-    torch.save(true_self_play_agent.target_net.state_dict(), Path('self-50-gens-target.pt'))
-    # torch.save(true_self_play_agent.policy_net.state_dict(), Path('test-true-self-play-policy.pt'))
-    # torch.save(true_self_play_agent.target_net.state_dict(), Path('test-true-self-play-target.pt'))
-    # tester = ConnectXTester(DQNConnect4Player(rand_player_one), 'Rand 1', HumanConnect4Player(), 'Human', 5, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
-    # tester.test()
-    # tester = ConnectXTester(DQNConnect4Player(rand_player_two), 'Rand 2', HumanConnect4Player(), 'Human', 5, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
-    # tester.test()
 
-    # print(compare(rand_player_one.policy_net, rand_player_two.policy_net))
-    # good_conv = DQNAgent(None, 
-    #                     conv_model=True, 
-    #                     board_width=board.width, 
-    #                     board_height=board.height, 
-    #                     action_states=board.width, 
-    #                     batch_size=100, 
-    #                     epsilon=.999, 
-    #                     epsilon_decay=0.01, 
-    #                     min_epsilon=0.05, 
-    #                     gamma=.5, 
-    #                     lr=0.0001,
-    #                     pre_trained_policy=torch.load('long-table-policy.pt'),
-    #                     pre_trained_target=torch.load('long-table-target.pt'))
-
-    tester = ConnectXTester(true_self_player, 'DQN', AlphaBetaConnect4Player(respective_powered, 1, 125), 'Respective Powered', 500, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
+    tester = ConnectXTester(dqn_player, 'DQN', AlphaBetaConnect4Player(respective_powered, 1, 125), 'Respective Powered', 500, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
     tester.test()
-
-    # tester = ConnectXTester(AlphaBetaConnect4Player(table_heuristic, 1, 125), 'Table', true_self_player, 'True Self Play', 20, ConnectXBoard(height=height, width=width, x=x), pause = False, render = 'none')
-    # tester.test()

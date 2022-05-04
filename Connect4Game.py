@@ -5,7 +5,9 @@ from AlphaBetaConnect4Player import AlphaBetaConnect4Player
 from ConnectXHeuristics import partial_lines_heuristic, dist_heuristic, table_heuristic
 from DQNConnect4Player import DQNConnect4Player
 from ConnectXDQNTrainer import DQNAgent
-import torch
+
+from ModelLoading import load_model
+
 import pygame
 import sys
 import time
@@ -13,8 +15,6 @@ import time
 class Connect4Game:
 
     def __init__(self, board, player_two, move_delay = 0):
-        # self.human = player_one == 'human'
-        # self.player_one = player_one
         self.player_two = player_two
         self.base_board = board.clone_board()
         self.gui = GUIBoard(self.base_board.clone_board())
@@ -55,19 +55,9 @@ class Connect4Game:
 
 if __name__ == '__main__':
     test_board = ConnectXBoard()
-    good_conv = DQNAgent(None, 
-                        conv_model=True, 
-                        board_width=test_board.width, 
-                        board_height=test_board.height, 
-                        action_states=test_board.width, 
-                        batch_size=100, 
-                        epsilon=.999, 
-                        epsilon_decay=0.01, 
-                        min_epsilon=0.05, 
-                        gamma=.5, 
-                        lr=0.0001,
-                        pre_trained_policy=torch.load('self-10-gens-policy.pt'),
-                        pre_trained_target=torch.load('self-10-gens-target.pt'))
+
+    other_player = DQNConnect4Player(load_model('10000-eps-respective_powered'))
+
     while True:
         print('New Game')
-        game = Connect4Game(test_board, DQNConnect4Player(good_conv), move_delay=0.5)
+        game = Connect4Game(test_board, other_player, move_delay=0.5)
