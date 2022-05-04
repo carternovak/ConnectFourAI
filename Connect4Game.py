@@ -56,7 +56,7 @@ class Connect4Game:
 if __name__ == '__main__':
     test_board = ConnectXBoard()
 
-    other_player = DQNConnect4Player(load_model('10000-eps-respective_powered'))
+    other_player = DQNConnect4Player(load_model('10000-eps-respective_powered-25-depth'))
 
     while True:
         print('New Game')

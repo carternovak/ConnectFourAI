@@ -68,31 +68,31 @@ class ConvDQN(nn.Module):
         self.bn32 = nn.BatchNorm2d(32)
 
         # SOURCE: https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
+
         def conv2d_size_out(size, kernel_size = kernel_size, stride = stride):
             return (size - (kernel_size - 1) - 1) // stride  + 1
         
-        convw = conv2d_size_out(conv2d_size_out(width))#conv2d_size_out(conv2d_size_out(conv2d_size_out(conv2d_size_out(width))))
-        convh = conv2d_size_out(conv2d_size_out(height))#conv2d_size_out(conv2d_size_out(conv2d_size_out(conv2d_size_out(height))))
+        convw = conv2d_size_out(conv2d_size_out(width))
+        convh = conv2d_size_out(conv2d_size_out(height))
 
         linear_input_size = convw * convh * 32
-        # END
+
+        # END - Cited Section
+
         self.l1 = nn.Linear(linear_input_size, 80)
-        # self.l2 = nn.Linear(80, 80)
-        # self.l3 = nn.Linear(80, 40)
-        # self.l4 = nn.Linear(40, 20)
         self.final = nn.Linear(80, action_states)
         self.relu = nn.ReLU()
 
     def forward(self, x):
+
+        # Feed through the convolutional layers
         x = self.relu(self.bn16(self.conv1(x)))
         x = self.relu(self.bn32(self.conv2(x)))
-        # x = self.relu(self.bn32(self.conv3(x)))
-        # x = self.relu(self.bn32(self.conv3(x)))
+
+
         x = x.view(x.size(0), -1)
         x = self.relu(self.l1(x))
-        # x = self.relu(self.l2(x))
-        # x = self.relu(self.l3(x))
-        # x = self.relu(self.l4(x))
+
         # Don't use ReLu fo the last one
         x = self.final(x)
         return x
@@ -207,11 +207,13 @@ class DQNAgent:
         # Prediction is based on the target net
         # (if done then the future reward is 0 )
         targets = self.target_net(next_state_batch)
-        # Get the max for each element of the batch
 
+        # Get the max for each element of the batch
         max_targets = targets.max(dim = 1).values
 
-        predicted = reward_batch + (self.gamma * max_targets)#torch.mul((self.gamma * max_targets), done_batch)
+        # Get the predicted values 
+        predicted = reward_batch + (self.gamma * max_targets)
+
         # expected is based on the policy net
         expected = self.policy_net(state_batch).gather(1, action_batch).squeeze()
 
@@ -224,9 +226,6 @@ class DQNAgent:
         self.optimizer.step()
         self.scheduler.step()
 
-        # for param in self.policy_net.parameters():
-        #     param.grad.data.clamp_(-1, 1)
-        
         self.epsilon = max(self.epsilon * (1 - self.epsilon_decay), self.min_epsilon)
 
         return sum(batch_loss)/len(batch_loss)
