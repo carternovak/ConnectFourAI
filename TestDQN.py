@@ -15,8 +15,6 @@ from ConnectXTester import *
 from ConnectXBoard import *
 from ConnectXHeuristics import *
 
-from THUNDERDOME import ThunderDome
-
 from pathlib import Path
 import matplotlib.pyplot as plt
 
@@ -44,17 +42,6 @@ if __name__ == '__main__':
     # # agent.target_net.load_state_dict(torch.load(Path('rand-target.pt')))
     # torch.save(agent.policy_net.state_dict(), Path('long-table-policy.pt'))
     # torch.save(agent.target_net.state_dict(), Path('long-table-target.pt'))
-
-    # dueling_dqns = DuelingDQNs(conv=True, height=height, width=width)
-    # dqn_one_avg_reward, dqn_two_avg_reward = dueling_dqns.train(15, 500)
-    # # plt.plot(dqn_one_avg_reward)
-    # # plt.plot(dqn_two_avg_reward)
-    # # plt.ylabel('Average Reward')
-    # # plt.xlabel('Epoch')
-    # # plt.show()
-    # dqn_1, dqn_2 = dueling_dqns.get_dqns()
-    # dqn_1_player = DQNConnect4Player(dqn_1)
-    # dqn_2_player = DQNConnect4Player(dqn_2)
 
     # torch.save(dqn_1.policy_net.state_dict(), Path('15-500-conv-p1-policy.pt'))
     # torch.save(dqn_1.target_net.state_dict(), Path('15-500-conv-p1-target.pt'))
