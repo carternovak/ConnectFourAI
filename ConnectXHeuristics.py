@@ -1,230 +1,255 @@
 import random
 import numpy as np
-#from collections import Set
+
+
+# from collections import Set
 
 def respective_powered(board):
     finalEval = 0
-    finalEval += (fourinarow(board)*4)**4
-    finalEval += (threeinarow(board)*3)**3
-    finalEval += (twoinarow(board)*2)**2
+    finalEval += (fourinarow(board) * 4) ** 4
+    finalEval += (threeinarow(board) * 3) ** 3
+    finalEval += (twoinarow(board) * 2) ** 2
     return finalEval
+
 
 def fourinarow(board_obj):
     p1_four = 0
     p2_four = 0
 
     board = board_obj.to_array()
-    #horizontal
+    # horizontal
     for i in range(board_obj.height):
         for j in range(board_obj.width - 3):
-            if board[i][j] == 1 and board[i][j+1] == 1 and board[i][j+2] == 1 and board[i][j+3] == 1:
+            if board[i][j] == 1 and board[i][j + 1] == 1 and board[i][j + 2] == 1 and board[i][j + 3] == 1:
                 p1_four += 1
-            elif board[i][j] == -1 and board[i][j+1] == -1 and board[i][j+2] == -1 and board[i][j+3] == -1:
+            elif board[i][j] == -1 and board[i][j + 1] == -1 and board[i][j + 2] == -1 and board[i][j + 3] == -1:
                 p2_four -= 1
-    #vertical
+    # vertical
     for i in range(board_obj.height - 3):
         for j in range(board_obj.width):
-            if board[i][j] == 1 and board[i+1][j] == 1 and board[i+2][j] == 1 and board[i+3][j] == 1:
+            if board[i][j] == 1 and board[i + 1][j] == 1 and board[i + 2][j] == 1 and board[i + 3][j] == 1:
                 p1_four += 1
-            elif board[i][j] == -1 and board[i+1][j] == -1 and board[i+2][j] == -1 and board[i+3][j] == -1:
+            elif board[i][j] == -1 and board[i + 1][j] == -1 and board[i + 2][j] == -1 and board[i + 3][j] == -1:
                 p2_four -= 1
-    #negative diagonal
+    # negative diagonal
     for i in range(board_obj.height):
         for j in range(board_obj.width - 3):
-            if board[i][j] == 1 and board[i-1][j+1] == 1 and board[i-2][j+2] == 1 and board[i-3][j+3] == 1:
+            if board[i][j] == 1 and board[i - 1][j + 1] == 1 and board[i - 2][j + 2] == 1 and board[i - 3][j + 3] == 1:
                 p1_four += 1
-            elif board[i][j] == -1 and board[i-1][j+1] == -1 and board[i-2][j+2] == -1 and board[i-3][j+3] == -1:
+            elif board[i][j] == -1 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == -1 and board[i - 3][
+                j + 3] == -1:
                 p2_four -= 1
-    #positive diagonal
+    # positive diagonal
     for i in range(board_obj.height - 3):
         for j in range(board_obj.width - 3):
-            if board[i][j] == 1 and board[i+1][j+1] == 1 and board[i+2][j+2] == 1 and board[i+3][j+3] == 1:
+            if board[i][j] == 1 and board[i + 1][j + 1] == 1 and board[i + 2][j + 2] == 1 and board[i + 3][j + 3] == 1:
                 p1_four += 1
-            elif board[i][j] == -1 and board[i+1][j+1] == -1 and board[i+2][j+2] == -1 and board[i+3][j+3] == -1:
+            elif board[i][j] == -1 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == -1 and board[i + 3][
+                j + 3] == -1:
                 p2_four -= 1
 
     return max(p1_four, abs(p2_four))
+
 
 def threeinarow(board_obj):
     p1_three = 0
     p2_three = 0
 
     board = board_obj.to_array()
-    #horizontal
+    # horizontal
     for i in range(board_obj.height):
         for j in range(board_obj.width - 3):
-            if board[i][j] == 1 and board[i][j+1] == 1 and board[i][j+2] == 1 and board[i][j+3] == 0:
+            if board[i][j] == 1 and board[i][j + 1] == 1 and board[i][j + 2] == 1 and board[i][j + 3] == 0:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i][j+1] == -1 and board[i][j+2] == -1 and board[i][j+3] == 0:
-                p2_three += 1
-            if board[i][j] == 1 and board[i][j+1] == 1 and board[i][j+2] == 0 and board[i][j+3] == 1:
+            elif board[i][j] == -1 and board[i][j + 1] == -1 and board[i][j + 2] == -1 and board[i][j + 3] == 0:
+                p2_three -= 1
+            if board[i][j] == 1 and board[i][j + 1] == 1 and board[i][j + 2] == 0 and board[i][j + 3] == 1:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i][j+1] == -1 and board[i][j+2] == 0 and board[i][j+3] == -1:
-                p2_three += 1
-            if board[i][j] == 1 and board[i][j+1] == 0 and board[i][j+2] == 1 and board[i][j+3] == 1:
+            elif board[i][j] == -1 and board[i][j + 1] == -1 and board[i][j + 2] == 0 and board[i][j + 3] == -1:
+                p2_three -= 1
+            if board[i][j] == 1 and board[i][j + 1] == 0 and board[i][j + 2] == 1 and board[i][j + 3] == 1:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i][j+1] == 0 and board[i][j+2] == -1 and board[i][j+3] == -1:
-                p2_three += 1
-            if board[i][j] == 0 and board[i][j+1] == 1 and board[i][j+2] == 1 and board[i][j+3] == 1:
+            elif board[i][j] == -1 and board[i][j + 1] == 0 and board[i][j + 2] == -1 and board[i][j + 3] == -1:
+                p2_three -= 1
+            if board[i][j] == 0 and board[i][j + 1] == 1 and board[i][j + 2] == 1 and board[i][j + 3] == 1:
                 p1_three += 1
-            elif board[i][j] == 0 and board[i][j+1] == -1 and board[i][j+2] == -1 and board[i][j+3] == -1:
-                p2_three += 1
-    #vertical
+            elif board[i][j] == 0 and board[i][j + 1] == -1 and board[i][j + 2] == -1 and board[i][j + 3] == -1:
+                p2_three -= 1
+    # vertical
     for i in range(board_obj.height - 3):
         for j in range(board_obj.width):
-            if board[i][j] == 1 and board[i+1][j] == 1 and board[i+2][j] == 1 and board[i+3][j] == 0:
+            if board[i][j] == 1 and board[i + 1][j] == 1 and board[i + 2][j] == 1 and board[i + 3][j] == 0:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i+1][j] == -1 and board[i+2][j] == -1 and board[i+3][j] == 0:
-                p2_three += 1
-            if board[i][j] == 1 and board[i+1][j] == 1 and board[i+2][j] == 0 and board[i+3][j] == 1:
+            elif board[i][j] == -1 and board[i + 1][j] == -1 and board[i + 2][j] == -1 and board[i + 3][j] == 0:
+                p2_three -= 1
+            if board[i][j] == 1 and board[i + 1][j] == 1 and board[i + 2][j] == 0 and board[i + 3][j] == 1:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i+1][j] == -1 and board[i+2][j] == 0 and board[i+3][j] == -1:
-                p2_three += 1
-            if board[i][j] == 1 and board[i+1][j] == 0 and board[i+2][j] == 1 and board[i+3][j] == 1:
+            elif board[i][j] == -1 and board[i + 1][j] == -1 and board[i + 2][j] == 0 and board[i + 3][j] == -1:
+                p2_three -= 1
+            if board[i][j] == 1 and board[i + 1][j] == 0 and board[i + 2][j] == 1 and board[i + 3][j] == 1:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i+1][j] == 0 and board[i+2][j] == -1 and board[i+3][j] == -1:
-                p2_three += 1
-            if board[i][j] == 0 and board[i+1][j] == 1 and board[i+2][j] == 1 and board[i+3][j] == 1:
+            elif board[i][j] == -1 and board[i + 1][j] == 0 and board[i + 2][j] == -1 and board[i + 3][j] == -1:
+                p2_three -= 1
+            if board[i][j] == 0 and board[i + 1][j] == 1 and board[i + 2][j] == 1 and board[i + 3][j] == 1:
                 p1_three += 1
-            elif board[i][j] == 0 and board[i+1][j] == -1 and board[i+2][j] == -1 and board[i+3][j] == -1:
-                p2_three += 1
+            elif board[i][j] == 0 and board[i + 1][j] == -1 and board[i + 2][j] == -1 and board[i + 3][j] == -1:
+                p2_three -= 1
     # negative diagonal
     for i in range(board_obj.height):
-        for j in range(board_obj.width-3):
-            if board[i][j] == 1 and board[i-1][j + 1] == 1 and board[i-2][j + 2] == 1 and board[i-3][j + 3] == 0:
+        for j in range(board_obj.width - 3):
+            if board[i][j] == 1 and board[i - 1][j + 1] == 1 and board[i - 2][j + 2] == 1 and board[i - 3][j + 3] == 0:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i-1][j + 1] == -1 and board[i-2][j + 2] == -1 and board[i-3][j + 3] == 0:
-                p2_three += 1
-            if board[i][j] == 1 and board[i-1][j + 1] == 1 and board[i-2][j + 2] == 0 and board[i-3][j + 3] == 1:
+            elif board[i][j] == -1 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == -1 and board[i - 3][
+                j + 3] == 0:
+                p2_three -= 1
+            if board[i][j] == 1 and board[i - 1][j + 1] == 1 and board[i - 2][j + 2] == 0 and board[i - 3][j + 3] == 1:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i-1][j + 1] == -1 and board[i-2][j + 2] == 0 and board[i-3][j + 3] == -1:
-                p2_three += 1
-            if board[i][j] == 1 and board[i-1][j + 1] == 0 and board[i-2][j + 2] == 1 and board[i-3][j + 3] == 1:
+            elif board[i][j] == -1 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == 0 and board[i - 3][
+                j + 3] == -1:
+                p2_three -= 1
+            if board[i][j] == 1 and board[i - 1][j + 1] == 0 and board[i - 2][j + 2] == 1 and board[i - 3][j + 3] == 1:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i-1][j + 1] == 0 and board[i-2][j + 2] == -1 and board[i-3][j + 3] == -1:
-                p2_three += 1
-            if board[i][j] == 0 and board[i-1][j + 1] == 1 and board[i-2][j + 2] == 1 and board[i-3][j + 3] == 1:
+            elif board[i][j] == -1 and board[i - 1][j + 1] == 0 and board[i - 2][j + 2] == -1 and board[i - 3][
+                j + 3] == -1:
+                p2_three -= 1
+            if board[i][j] == 0 and board[i - 1][j + 1] == 1 and board[i - 2][j + 2] == 1 and board[i - 3][j + 3] == 1:
                 p1_three += 1
-            elif board[i][j] == 0 and board[i-1][j + 1] == -1 and board[i-2][j + 2] == -1 and board[i-3][j + 3] == -1:
-                p2_three += 1
+            elif board[i][j] == 0 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == -1 and board[i - 3][
+                j + 3] == -1:
+                p2_three -= 1
     # positive diagonal
     for i in range(board_obj.height - 3):
         for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i + 1][j + 1] == 1 and board[i + 2][j + 2] == 1 and board[i + 3][j + 3] == 0:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == -1 and board[i + 3][j + 3] == 0:
-                p2_three += 1
+            elif board[i][j] == -1 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == -1 and board[i + 3][
+                j + 3] == 0:
+                p2_three -= 1
             if board[i][j] == 1 and board[i + 1][j + 1] == 1 and board[i + 2][j + 2] == 0 and board[i + 3][j + 3] == 1:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == 0 and board[i + 3][j + 3] == -1:
-                p2_three += 1
+            elif board[i][j] == -1 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == 0 and board[i + 3][
+                j + 3] == -1:
+                p2_three -= 1
             if board[i][j] == 1 and board[i + 1][j + 1] == 0 and board[i + 2][j + 2] == 1 and board[i + 3][j + 3] == 1:
                 p1_three += 1
-            elif board[i][j] == -1 and board[i + 1][j + 1] == 0 and board[i + 2][j + 2] == -1 and board[i + 3][j + 3] == -1:
-                p2_three += 1
+            elif board[i][j] == -1 and board[i + 1][j + 1] == 0 and board[i + 2][j + 2] == -1 and board[i + 3][
+                j + 3] == -1:
+                p2_three -= 1
             if board[i][j] == 0 and board[i + 1][j + 1] == 1 and board[i + 2][j + 2] == 1 and board[i + 3][j + 3] == 1:
                 p1_three += 1
-            elif board[i][j] == 0 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == -1 and board[i + 3][j + 3] == -1:
-                p2_three += 1
-    
+            elif board[i][j] == 0 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == -1 and board[i + 3][
+                j + 3] == -1:
+                p2_three -= 1
+
     return max(p1_three, abs(p2_three))
+
 
 def twoinarow(board_obj):
     p1_two = 0
     p2_two = 0
 
     board = board_obj.to_array()
-    #horizontal
+    # horizontal
     for i in range(board_obj.height):
         for j in range(board_obj.width - 3):
-            if board[i][j] == 1 and board[i][j+1] == 1 and board[i][j+2] == 0 and board[i][j+3] == 0:
+            if board[i][j] == 1 and board[i][j + 1] == 1 and board[i][j + 2] == 0 and board[i][j + 3] == 0:
                 p1_two += 1
-            elif board[i][j] == -1 and board[i][j+1] == -1 and board[i][j+2] == 0 and board[i][j+3] == 0:
+            elif board[i][j] == -1 and board[i][j + 1] == -1 and board[i][j + 2] == 0 and board[i][j + 3] == 0:
                 p2_two -= 1
-            if board[i][j] == 1 and board[i][j+1] == 0 and board[i][j+2] == 1 and board[i][j+3] == 0:
+            if board[i][j] == 1 and board[i][j + 1] == 0 and board[i][j + 2] == 1 and board[i][j + 3] == 0:
                 p1_two += 1
-            elif board[i][j] == -1 and board[i][j+1] == 0 and board[i][j+2] == -1 and board[i][j+3] == 0:
+            elif board[i][j] == -1 and board[i][j + 1] == 0 and board[i][j + 2] == -1 and board[i][j + 3] == 0:
                 p2_two -= 1
-            if board[i][j] == 0 and board[i][j+1] == 1 and board[i][j+2] == 1 and board[i][j+3] == 0:
+            if board[i][j] == 0 and board[i][j + 1] == 1 and board[i][j + 2] == 1 and board[i][j + 3] == 0:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i][j+1] == -1 and board[i][j+2] == -1 and board[i][j+3] == 0:
+            elif board[i][j] == 0 and board[i][j + 1] == -1 and board[i][j + 2] == -1 and board[i][j + 3] == 0:
                 p2_two -= 1
-            if board[i][j] == 0 and board[i][j+1] == 1 and board[i][j+2] == 0 and board[i][j+3] == 1:
+            if board[i][j] == 0 and board[i][j + 1] == 1 and board[i][j + 2] == 0 and board[i][j + 3] == 1:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i][j+1] == -1 and board[i][j+2] == 0 and board[i][j+3] == -1:
+            elif board[i][j] == 0 and board[i][j + 1] == -1 and board[i][j + 2] == 0 and board[i][j + 3] == -1:
                 p2_two -= 1
-            if board[i][j] == 0 and board[i][j+1] == 0 and board[i][j+2] == 1 and board[i][j+3] == 1:
+            if board[i][j] == 0 and board[i][j + 1] == 0 and board[i][j + 2] == 1 and board[i][j + 3] == 1:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i][j+1] == 0 and board[i][j+2] == -1 and board[i][j+3] == -1:
+            elif board[i][j] == 0 and board[i][j + 1] == 0 and board[i][j + 2] == -1 and board[i][j + 3] == -1:
                 p2_two -= 1
-    #vertical
+    # vertical
     for i in range(board_obj.height - 3):
         for j in range(board_obj.width):
-            if board[i][j] == 1 and board[i+1][j] == 1 and board[i+2][j] == 0 and board[i+3][j] == 0:
+            if board[i][j] == 1 and board[i + 1][j] == 1 and board[i + 2][j] == 0 and board[i + 3][j] == 0:
                 p1_two += 1
-            elif board[i][j] == -1 and board[i+1][j] == -1 and board[i+2][j] == 0 and board[i+3][j] == 0:
+            elif board[i][j] == -1 and board[i + 1][j] == -1 and board[i + 2][j] == 0 and board[i + 3][j] == 0:
                 p2_two -= 1
-            if board[i][j] == 1 and board[i+1][j] == 0 and board[i+2][j] == 1 and board[i+3][j] == 0:
+            if board[i][j] == 1 and board[i + 1][j] == 0 and board[i + 2][j] == 1 and board[i + 3][j] == 0:
                 p1_two += 1
-            elif board[i][j] == -1 and board[i+1][j] == 0 and board[i+2][j] == -1 and board[i+3][j] == 0:
+            elif board[i][j] == -1 and board[i + 1][j] == 0 and board[i + 2][j] == -1 and board[i + 3][j] == 0:
                 p2_two -= 1
-            if board[i][j] == 0 and board[i+1][j] == 1 and board[i+2][j] == 1 and board[i+3][j] == 0:
+            if board[i][j] == 0 and board[i + 1][j] == 1 and board[i + 2][j] == 1 and board[i + 3][j] == 0:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i+1][j] == -1 and board[i+2][j] == -1 and board[i+3][j] == 0:
+            elif board[i][j] == 0 and board[i + 1][j] == -1 and board[i + 2][j] == -1 and board[i + 3][j] == 0:
                 p2_two -= 1
-            if board[i][j] == 0 and board[i+1][j] == 1 and board[i+2][j] == 0 and board[i+3][j] == 1:
+            if board[i][j] == 0 and board[i + 1][j] == 1 and board[i + 2][j] == 0 and board[i + 3][j] == 1:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i+1][j] == -1 and board[i+2][j] == 0 and board[i+3][j] == -1:
+            elif board[i][j] == 0 and board[i + 1][j] == -1 and board[i + 2][j] == 0 and board[i + 3][j] == -1:
                 p2_two -= 1
-            if board[i][j] == 0 and board[i+1][j] == 0 and board[i+2][j] == 1 and board[i+3][j] == 1:
+            if board[i][j] == 0 and board[i + 1][j] == 0 and board[i + 2][j] == 1 and board[i + 3][j] == 1:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i+1][j] == 0 and board[i+2][j] == -1 and board[i+3][j] == -1:
+            elif board[i][j] == 0 and board[i + 1][j] == 0 and board[i + 2][j] == -1 and board[i + 3][j] == -1:
                 p2_two -= 1
-    #negative diagonal
+    # negative diagonal
     for i in range(board_obj.height):
         for j in range(board_obj.width - 3):
             if board[i][j] == 1 and board[i - 1][j + 1] == 1 and board[i - 2][j + 2] == 0 and board[i - 3][j + 3] == 0:
                 p1_two += 1
-            elif board[i][j] == -1 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == 0 and board[i - 3][j + 3] == 0:
+            elif board[i][j] == -1 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == 0 and board[i - 3][
+                j + 3] == 0:
                 p2_two -= 1
             if board[i][j] == 1 and board[i - 1][j + 1] == 0 and board[i - 2][j + 2] == 1 and board[i - 3][j + 3] == 0:
                 p1_two += 1
-            elif board[i][j] == -1 and board[i - 1][j + 1] == 0 and board[i - 2][j + 2] == -1 and board[i - 3][j + 3] == 0:
+            elif board[i][j] == -1 and board[i - 1][j + 1] == 0 and board[i - 2][j + 2] == -1 and board[i - 3][
+                j + 3] == 0:
                 p2_two -= 1
             if board[i][j] == 0 and board[i - 1][j + 1] == 1 and board[i - 2][j + 2] == 1 and board[i - 3][j + 3] == 0:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == -1 and board[i - 3][j + 3] == 0:
+            elif board[i][j] == 0 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == -1 and board[i - 3][
+                j + 3] == 0:
                 p2_two -= 1
             if board[i][j] == 0 and board[i - 1][j + 1] == 1 and board[i - 2][j + 2] == 0 and board[i - 3][j + 3] == 1:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == 0 and board[i - 3][j + 3] == -1:
+            elif board[i][j] == 0 and board[i - 1][j + 1] == -1 and board[i - 2][j + 2] == 0 and board[i - 3][
+                j + 3] == -1:
                 p2_two -= 1
             if board[i][j] == 0 and board[i - 1][j + 1] == 0 and board[i - 2][j + 2] == 1 and board[i - 3][j + 3] == 1:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i - 1][j + 1] == 0 and board[i - 2][j + 2] == -1 and board[i - 3][j + 3] == -1:
+            elif board[i][j] == 0 and board[i - 1][j + 1] == 0 and board[i - 2][j + 2] == -1 and board[i - 3][
+                j + 3] == -1:
                 p2_two -= 1
-    #positive diagonal
+    # positive diagonal
     for i in range(board_obj.height - 3):
         for j in range(board_obj.width - 3):
-            if board[i][j] == 1 and board[i+1][j+1] == 1 and board[i+2][j+2] == 0 and board[i+3][j+3] == 0:
+            if board[i][j] == 1 and board[i + 1][j + 1] == 1 and board[i + 2][j + 2] == 0 and board[i + 3][j + 3] == 0:
                 p1_two += 1
-            elif board[i][j] == -1 and board[i+1][j+1] == -1 and board[i+2][j+2] == 0 and board[i+3][j+3] == 0:
+            elif board[i][j] == -1 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == 0 and board[i + 3][
+                j + 3] == 0:
                 p2_two -= 1
-            if board[i][j] == 1 and board[i+1][j+1] == 0 and board[i+2][j+2] == 1 and board[i+3][j+3] == 0:
+            if board[i][j] == 1 and board[i + 1][j + 1] == 0 and board[i + 2][j + 2] == 1 and board[i + 3][j + 3] == 0:
                 p1_two += 1
-            elif board[i][j] == -1 and board[i+1][j+1] == 0 and board[i+2][j+2] == -1 and board[i+3][j+3] == 0:
+            elif board[i][j] == -1 and board[i + 1][j + 1] == 0 and board[i + 2][j + 2] == -1 and board[i + 3][
+                j + 3] == 0:
                 p2_two -= 1
-            if board[i][j] == 0 and board[i+1][j+1] == 1 and board[i+2][j+2] == 1 and board[i+3][j+3] == 0:
+            if board[i][j] == 0 and board[i + 1][j + 1] == 1 and board[i + 2][j + 2] == 1 and board[i + 3][j + 3] == 0:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i+1][j+1] == -1 and board[i+2][j+2] == -1 and board[i+3][j+3] == 0:
+            elif board[i][j] == 0 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == -1 and board[i + 3][
+                j + 3] == 0:
                 p2_two -= 1
-            if board[i][j] == 0 and board[i+1][j+1] == 1 and board[i+2][j+2] == 0 and board[i+3][j+3] == 1:
+            if board[i][j] == 0 and board[i + 1][j + 1] == 1 and board[i + 2][j + 2] == 0 and board[i + 3][j + 3] == 1:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i+1][j+1] == -1 and board[i+2][j+2] == 0 and board[i+3][j+3] == -1:
+            elif board[i][j] == 0 and board[i + 1][j + 1] == -1 and board[i + 2][j + 2] == 0 and board[i + 3][
+                j + 3] == -1:
                 p2_two -= 1
-            if board[i][j] == 0 and board[i+1][j+1] == 0 and board[i+2][j+2] == 1 and board[i+3][j+3] == 1:
+            if board[i][j] == 0 and board[i + 1][j + 1] == 0 and board[i + 2][j + 2] == 1 and board[i + 3][j + 3] == 1:
                 p1_two += 1
-            elif board[i][j] == 0 and board[i+1][j+1] == 0 and board[i+2][j+2] == -1 and board[i+3][j+3] == -1:
+            elif board[i][j] == 0 and board[i + 1][j + 1] == 0 and board[i + 2][j + 2] == -1 and board[i + 3][
+                j + 3] == -1:
                 p2_two -= 1
 
     return max(p1_two, abs(p2_two))
@@ -236,17 +261,20 @@ def manhattan_distance(point1, point2):
         dist = abs(dim1 - dim2)
     return dist
 
+
 def euclidean_distance(point1, point2):
     dist = 0
     for (dim1, dim2) in zip(point1, point2):
         dist = (dim1 - dim2) ** 2
-    return dist ** (1/2)
-    
+    return dist ** (1 / 2)
+
+
 def get_mean_of_points(points):
     mean = []
     for dim in zip(*points):
-        mean.append(sum(dim)/len(dim))
+        mean.append(sum(dim) / len(dim))
     return mean
+
 
 def dist_heuristic(board):
     # Calculate the distance of each players piece from the mean of their pieces
@@ -260,6 +288,7 @@ def dist_heuristic(board):
         sse_vals.append(sse)
     # Closer to 1 = Better for player one
     return sse_vals[0] - sse_vals[1]
+
 
 def get_line_length(board, line):
     line_length = 0
@@ -279,10 +308,11 @@ def get_line_length(board, line):
 
     return line_length
 
+
 def get_partial_lines(board, player):
     partial_lines = {}
 
-    for line_length in range(2,board.x):
+    for line_length in range(2, board.x):
         partial_lines[line_length] = 0
 
     line_list = []
@@ -310,31 +340,34 @@ def get_partial_lines(board, player):
 
     return partial_lines
 
+
 def partial_lines_heuristic(board):
     # This heuristics counts the number of partial lines for each player
     partial_line_weights = []
     weight = 1
     weight_decay_rate = 1
-    for index in range(2,board.x):
+    for index in range(2, board.x):
         partial_line_weights.insert(0, weight)
         weight *= (1 - weight_decay_rate)
-    
+
     player_one_partial_lines = get_partial_lines(board, 1).values()
     player_two_partial_lines = get_partial_lines(board, -1).values()
     heuristic_value = 0
-    for p1_lines, p2_lines, line_weight in zip(player_one_partial_lines, player_two_partial_lines, partial_line_weights):
+    for p1_lines, p2_lines, line_weight in zip(player_one_partial_lines, player_two_partial_lines,
+                                               partial_line_weights):
         heuristic_value += (p1_lines - p2_lines) * line_weight
 
     return heuristic_value
 
+
 def table_heuristic(board):
     val_table = [
-        [3,4,5,7,5,4,3],
-        [4,6,8,10,8,6,4],
-        [5,8,11,13,11,8,5],
-        [5,8,11,13,11,8,5],
-        [4,6,8,10,8,6,4],
-        [3,4,5,7,5,4,3],
+        [3, 4, 5, 7, 5, 4, 3],
+        [4, 6, 8, 10, 8, 6, 4],
+        [5, 8, 11, 13, 11, 8, 5],
+        [5, 8, 11, 13, 11, 8, 5],
+        [4, 6, 8, 10, 8, 6, 4],
+        [3, 4, 5, 7, 5, 4, 3],
     ]
     val_array = np.array(val_table)
     weighted_array = np.array(board.to_array()) * val_array
