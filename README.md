@@ -24,7 +24,7 @@ These are the different classes that are used to play Connect 4. Each one uses a
 - GreedPlayer: Always put a piece in the first available space
 
 ### Board (ConnectXBoard.py):
-Store the state of the Connect4 board and contains functions used to get and set it's state.
+Store the state of the Connect4 board and contains functions used to get and set its state.
 
 ### GUI (GUIBoard.py):
 This class contains the code used to render the board visually with Pygame
