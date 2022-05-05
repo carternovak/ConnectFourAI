@@ -2,7 +2,7 @@ from RandomConnect4Player import RandomConnect4Player
 from GUIBoard import GUIBoard
 from ConnectXBoard import ConnectXBoard
 from AlphaBetaConnect4Player import AlphaBetaConnect4Player
-from ConnectXHeuristics import partial_lines_heuristic, dist_heuristic, table_heuristic
+from ConnectXHeuristics import partial_lines_heuristic, dist_heuristic, table_heuristic, respective_powered
 from DQNConnect4Player import DQNConnect4Player
 from ConnectXDQNTrainer import DQNAgent
 
@@ -55,8 +55,14 @@ class Connect4Game:
 
 if __name__ == '__main__':
     test_board = ConnectXBoard()
-
-    other_player = DQNConnect4Player(load_model('15000-eps-random'))
+    print('Who do you want to play against? (Table, RP, or DQN)')
+    to_play_against = input()
+    if (to_play_against == 'Table'):
+        other_player = AlphaBetaConnect4Player(table_heuristic, -1, 125)
+    if (to_play_against == 'RP'):
+        other_player = AlphaBetaConnect4Player(respective_powered, -1, 125)
+    else:
+        other_player = DQNConnect4Player(load_model('10000-eps-respective_powered-125-depth'))
 
     while True:
         print('New Game')
