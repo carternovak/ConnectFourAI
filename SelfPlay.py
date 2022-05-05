@@ -1,4 +1,3 @@
-import torch
 from ConnectXDQNTrainer import DQNAgent
 from ConnectXGym import ConnectXGym
 from ConnectXBoard import ConnectXBoard

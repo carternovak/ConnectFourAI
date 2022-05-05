@@ -1,8 +1,6 @@
 import random
 import gym
 from gym import spaces
-import numpy as np
-import torch
 from GUIBoard import *
 
 class ConnectXGym(gym.Env):
@@ -14,7 +12,7 @@ class ConnectXGym(gym.Env):
         # The action spaces is each column you can put something in
         self.action_space = spaces.Discrete(self.board.width)
         # The obeservation space is the state of the board respresented as 1D vector
-        # Sot the length of the vector is width * height
+        # Set the length of the vector is width * height
         obs_space_size = self.board.width * self.board.height
         self.observation_space = spaces.MultiDiscrete([3 for _ in range(obs_space_size)])
         self.other_player = other_player
@@ -57,14 +55,15 @@ class ConnectXGym(gym.Env):
                 reward = -1
                 info = {"Reason":"Move resulted in other player winning"}
         
+        # Return the board as a tensor along with the reward, whether the game is over, and any other info
         state = self.board.to_tensor()
         done = self.board.winner != None
         return state, reward, done, info
 
     def render(self, mode = "human"):
         if (mode == "human"):
+            # Render the board
             GUIBoard(self.board).drawGUIboard()
-            #print(self.board.to_string())
         if (mode == "tensor"):
             return self.board.to_tensor()
 

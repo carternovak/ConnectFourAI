@@ -1,6 +1,4 @@
 # Tests two Connect X Players against each other and compares their performance
-
-
 from ConnectXHeuristics import respective_powered, table_heuristic
 from GUIBoard import GUIBoard
 from DQNConnect4Player import DQNConnect4Player
@@ -9,10 +7,6 @@ from MinMaxConnect4Player import MinMaxConnect4Player
 from AlphaBetaConnect4Player import AlphaBetaConnect4Player
 from ModelLoading import load_model
 from ConnectXBoard import ConnectXBoard
-
-import dataframe_image as dfi
-
-import pandas as pd
 
 
 class ConnectXTester():
@@ -116,10 +110,10 @@ def test_multiple_models(dict_of_players, board, num_games = 500):
 
 if __name__ == '__main__':
     models = {
-        'DQN Random': DQNConnect4Player(load_model('15000-eps-random')),
-        'DQN Table': DQNConnect4Player(load_model('15000-eps-table-25-depth')),
+        'DQN Random': DQNConnect4Player(load_model('10000-eps-random')),
+        'DQN Table': DQNConnect4Player(load_model('10000-eps-table-25-depth')),
         'DQN Respective Power (Deep) 10,000': DQNConnect4Player(load_model('10000-eps-respective_powered-125-depth')),
-        'DQN Respective Power 10,000': DQNConnect4Player(load_model('10000-eps-respective_powered-25-depth')),
+        'DQN Respective Power 15,000': DQNConnect4Player(load_model('15000-eps-respective_powered-25-depth')),
         'DQN Respective Power 5,000': DQNConnect4Player(load_model('5000-eps-respective_powered-25-depth')),
         'DQN Respective Power 1,000': DQNConnect4Player(load_model('1000-eps-respective_powered-25-depth')),
         'Alpha Beta Table (125)': AlphaBetaConnect4Player(table_heuristic, -1, 125),
@@ -140,19 +134,4 @@ if __name__ == '__main__':
 
     results = test_multiple_models(models, board)
 
-    results_df = pd.DataFrame(results)
-    # results_df = pd.read_csv('results.csv')
-    # results_df.style.background_gradient(cmap='Blues')#pd.DataFrame(results)
-    results_df.to_csv('results.csv')
-    renames = {'DQN Respective Power (Deep) 10,000': 'DQN RP (Deep)',
-                'DQN Respective Power 10,000': 'DQN RP 10k',
-                'DQN Respective Power 5,000': 'DQN RP 5k',
-                'DQN Respective Power 1,000': 'DQN RP 1k',
-                'Alpha Beta Table (125)': 'A/B Table (125)',
-                'Alpha Beta Respective Power (125)': 'A/B RP (125)',
-                'Alpha Beta Table (50)': 'A/B Table (50)',
-                'Alpha Beta Respective Power (50)': 'A/B RP (50)',
-                'Alpha Beta Table (5)': 'A/B Table (5)',
-                'Alpha Beta Respective Power (5)': 'A/B RP (5)',
-                'Random': 'Rand'}
-    print(results_df)
+    print(results)

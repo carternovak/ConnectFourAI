@@ -1,13 +1,13 @@
 from typing import List
-from sympy import Q
 import torch
 import random
-from torch import nn, rand
+from torch import nn
 from collections import deque
 from collections import namedtuple
 from ConnectXBoard import *
 from ConnectXGym import *
 from RandomConnect4Player import *
+import numpy as np
 import time
 
 ExperienceTuple = namedtuple('ExperienceTuple', ['state', 'action', 'next_state', 'reward', 'done'])
@@ -64,7 +64,6 @@ class ConvDQN(nn.Module):
         self.conv1 = nn.Conv2d(1, 16, kernel_size, stride)
         self.bn16 = nn.BatchNorm2d(16)
         self.conv2 = nn.Conv2d(16, 32, kernel_size, stride)
-        # self.conv3 = nn.Conv2d(32, 32, kernel_size, stride)
         self.bn32 = nn.BatchNorm2d(32)
 
         # SOURCE: https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
@@ -238,7 +237,6 @@ class DQNAgent:
         eps_losses = []
         avg_ep_rewards = []
         eps_rewards = []
-        # ep_rewards = []
 
         start_time = time.time()
         last_time = start_time
@@ -275,16 +273,11 @@ class DQNAgent:
 
             # optimize the model
             batch_loss = self.experience_replay()
-            # ep_loss += batch_loss
 
-            # print(sum(total_rewards))
-            # np.mean(total_rewards)
             eps_rewards.append(sum(total_rewards))
 
             if ep_num % self.target_update_rate == 0:
                 # Update the target net to use the trained policy net
-                # eps_rewards.append(sum(ep_rewards)/len(ep_rewards))
-                # ep_rewards = []
                 avg_reward_over_ep = np.mean(eps_rewards)
                 avg_ep_rewards.append(avg_reward_over_ep)
                 eps_rewards = []

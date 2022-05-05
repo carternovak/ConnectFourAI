@@ -1,7 +1,6 @@
 from ConnectXDQNTrainer import *
 from ConnectXGym import *
 from DuelingDQNs import *
-from SelfPlay import self_play, true_self_play
 
 from RandomConnect4Player import *
 from DQNConnect4Player import *
@@ -24,11 +23,11 @@ if __name__ == '__main__':
     action_size = width
     board = ConnectXBoard(height=height, width=width, x=x)
 
-    env = ConnectXGym(board, AlphaBetaConnect4Player(respective_powered, -1, 125), 1, -1)
+    env = ConnectXGym(board, RandomConnect4Player(), 1, -1)
     agent = DQNAgent(env, conv_model = True, board_width = width, board_height = height, action_states = action_size, batch_size = 32, epsilon = .999, epsilon_decay = 0.001, min_epsilon = 0.01, gamma = .9, lr = 0.001)
-    training_results = agent.train(2500)
+    training_results = agent.train(10000)
 
-    save_model(agent, '2500-eps-respective_powered-125-depth')
+    save_model(agent, '10000-eps-random')
 
     sse_player = AlphaBetaConnect4Player(dist_heuristic, 1, 75)
     lines_player = AlphaBetaConnect4Player(partial_lines_heuristic, -1, 25)
