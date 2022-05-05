@@ -111,8 +111,6 @@ def test_multiple_models(dict_of_players, board, num_games = 500):
                 win_rates[player_name][other_player_name] = player_one_wins
                 if (player_name != other_player_name): 
                     win_rates[other_player_name][player_name] = player_two_wins
-            else:
-                print('skip')
 
     return win_rates
 
