@@ -4,9 +4,13 @@ This repository contains the code for our Deep Q-Learning and MiniMax(with Alpha
 
 ## Dependencies
 Pytorch: Can be installed using `conda install -c pytorch pytorch` or `conda install -c conda-forge gym`
+
 Numpy: Can be installed using `conda install -c conda-forge gym`
+
 Open AI Gym: Can be installed with `conda install -c anaconda numpy`
+
 Pygame: Can be installed with `conda install -c cogsci pygame`
+
 
 ## Sections
 
